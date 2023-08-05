@@ -5,6 +5,11 @@ const start = async () => {
   if (!process.env.JWT_KEY) {
     throw new Error('JWT_KEY is not supplied.');
   }
+
+  if (!process.env.LOCATION_DATABASE_MONGODB_URI) {
+    throw new Error('LOCATION_DATABASE_MONGODB_URI is not supplied.');
+  }
+
   try {
     console.log('connecting to mongodb...');
     await mongoose.connect(process.env.LOCATION_DATABASE_MONGODB_URI as string);

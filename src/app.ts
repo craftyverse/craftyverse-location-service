@@ -2,10 +2,11 @@ import express from 'express';
 import 'express-async-errors';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
-
+import { createLocationRouter } from './routes/create-location-route';
 import {
   errorHandler,
   NotFoundError,
+  currentUser,
 } from '@craftyverse-au/craftyverse-common';
 
 const app = express();
@@ -17,6 +18,10 @@ app.use(
     secure: process.env.NODE_ENV !== 'test',
   })
 );
+app.use(currentUser);
+
+// Placeholder for location service route
+app.use(createLocationRouter);
 
 app.all('*', async () => {
   throw new NotFoundError();
