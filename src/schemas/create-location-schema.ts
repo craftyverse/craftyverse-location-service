@@ -21,6 +21,6 @@ export const createLocationRequestSchema = z.object({
   locationLegalPostcode: z.string(),
 });
 
-export type createLocationRequest = z.infer<typeof createLocationRequestSchema>;
-export type locationRegionEnum = z.infer<typeof locationRegionEnum>;
-export type locationSIUnitEnum = z.infer<typeof locationSIUnitEnum>;
+export type NewLocation = z.infer<typeof createLocationRequestSchema>;
+export type LocationRegionEnum = z.infer<typeof locationRegionEnum>;
+export type LocationSIUnitEnum = z.infer<typeof locationSIUnitEnum>;
