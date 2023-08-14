@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-
+import { Location } from '../../models/Location';
 describe('POST /api/location/createLocation', () => {
   const payload = {
     locationName: 'Tony',
@@ -17,15 +17,13 @@ describe('POST /api/location/createLocation', () => {
     locationLegalState: 'NSW',
     locationLegalCountry: 'Australia',
     locationLegalPostcode: '2000',
-  }
+  };
   describe('## Route request validation', () => {
     it('should return an error if "locationName" mandatory field is null in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationName: null });
-
-      console.log(response.body)
 
       expect(response.status).toEqual(400);
     });
@@ -36,8 +34,6 @@ describe('POST /api/location/createLocation', () => {
         .set('Cookie', global.signup())
         .send({ ...payload, locationEmail: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
@@ -46,8 +42,6 @@ describe('POST /api/location/createLocation', () => {
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationIndustry: null });
-
-      console.log(response.body)
 
       expect(response.status).toEqual(400);
     });
@@ -58,7 +52,7 @@ describe('POST /api/location/createLocation', () => {
         .set('Cookie', global.signup())
         .send({ ...payload, locationCurrency: null });
 
-      console.log(response.body)
+      console.log(response.body);
 
       expect(response.status).toEqual(400);
     });
@@ -69,8 +63,6 @@ describe('POST /api/location/createLocation', () => {
         .set('Cookie', global.signup())
         .send({ ...payload, locationTimeZone: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
@@ -80,84 +72,68 @@ describe('POST /api/location/createLocation', () => {
         .set('Cookie', global.signup())
         .send({ ...payload, locationSIUnit: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
-    it('should return an error if "locationLegalBusinessName" mandatory field is not included in the request', async () => { 
+    it('should return an error if "locationLegalBusinessName" mandatory field is not included in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationLegalBusinessName: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
-    it('should return an error if "locationLegalAddressLine1" mandatory field is not included in the request', async () => { 
+    it('should return an error if "locationLegalAddressLine1" mandatory field is not included in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationLegalAddressLine1: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
-    it('should return an error if "locationLegalAddressLine2" mandatory field is not included in the request', async () => { 
+    it('should return an error if "locationLegalAddressLine2" mandatory field is not included in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationLegalAddressLine2: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
-    it('should return an error if "locationLegalCity" mandatory field is not included in the request', async () => { 
+    it('should return an error if "locationLegalCity" mandatory field is not included in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationLegalCity: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
-    it('should return an error if "locationLegalState" mandatory field is not included in the request', async () => { 
+    it('should return an error if "locationLegalState" mandatory field is not included in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationLegalState: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
-    it('should return an error if "locationLegalCountry" mandatory field is not included in the request', async () => { 
+    it('should return an error if "locationLegalCountry" mandatory field is not included in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationLegalCountry: null });
 
-      console.log(response.body)
-
       expect(response.status).toEqual(400);
     });
 
-    it('should return an error if "locationLegalPostcode" mandatory field is not included in the request', async () => { 
+    it('should return an error if "locationLegalPostcode" mandatory field is not included in the request', async () => {
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationLegalPostcode: null });
-
-      console.log(response.body)
 
       expect(response.status).toEqual(400);
     });
@@ -172,13 +148,21 @@ describe('POST /api/location/createLocation', () => {
       expect(response.status).not.toEqual(404);
     });
 
-    it('should successfully accessed if the user is authorised and provides a valid request payload', async () => {
+    it('should successfully save a location into MongoDB if the user is authorised and provides a valid request payload', async () => {
+      let locations = await Location.find({});
+      expect(locations.length).toEqual(0);
+
       const response = await request(app)
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send(payload);
 
       expect(response.status).toEqual(201);
+
+      locations = await Location.find({});
+      console.log('locations: ', locations);
+
+      expect(locations.length).toEqual(1);
     });
 
     it('should return a status other than a 401 if the user is signed in', async () => {
@@ -187,19 +171,21 @@ describe('POST /api/location/createLocation', () => {
         .set('Cookie', global.signup())
         .send({});
 
-      console.log(response.status);
-
       expect(response.status).not.toEqual(401);
     });
   });
 
   describe('## Error response validation', () => {
-    it('should return a 401 unauthorised error if the user is unauthorised', async () => { });
+    it('should return a 401 unauthorised error if the user is unauthorised', async () => {
+      const response = await request(app)
+        .post('/api/location/createLocation')
+        .send({ ...payload, locationLegalPostcode: null });
 
-    it('should return a 400 bad request error if a reuqest has failed', async () => { });
+      expect(response.status).toEqual(401);
+    });
   });
 
   describe('## Cache implementation', () => {
-    it('should populate the cache when a location is created', async () => { });
+    it('should populate the cache when a location is created', async () => {});
   });
 });

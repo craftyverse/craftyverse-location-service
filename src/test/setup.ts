@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import { app } from '../app';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
-import { buffer } from 'stream/consumers';
 
 declare global {
   var signup: () => string[];
@@ -18,7 +17,6 @@ beforeAll(async () => {
   process.env.JWT_KEY = 'asfoijea';
   mongoDb = await MongoMemoryServer.create();
   mongoDbUri = mongoDb.getUri();
-
   await mongoose.connect(mongoDbUri, {});
 });
 

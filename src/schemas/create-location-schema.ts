@@ -14,7 +14,7 @@ export const createLocationRequestSchema = z.object({
   locationSIUnit: locationSIUnitEnum,
   locationLegalBusinessName: z.string(),
   locationLegalAddressLine1: z.string(),
-  locationLegalAddressLine2: z.string(),
+  locationLegalAddressLine2: z.string().optional(),
   locationLegalCity: z.string(),
   locationLegalState: z.string(),
   locationLegalCountry: z.string(),

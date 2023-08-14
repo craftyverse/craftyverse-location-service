@@ -1,14 +1,36 @@
 import express, { Request, Response } from 'express';
-import { createLocationRequestSchema, NewLocation } from '../schemas/create-location-schema';
+import {
+  createLocationRequestSchema,
+  NewLocation,
+} from '../schemas/create-location-schema';
 import {
   BadRequestError,
   RequestValidationError,
   requireAuth,
 } from '@craftyverse-au/craftyverse-common';
 
-import { Location } from '../models/Location'
+import { Location } from '../models/Location';
+import { redisClient } from '../services/redis-service';
 
 const router = express.Router();
+
+type createLocaitonResponse = {
+  locationId: string;
+  locationName: string;
+  locationEmail: string;
+  locationIndustry: string;
+  locationRegion: string;
+  locationCurrency: string;
+  locationTimeZone: string;
+  locationSIUnit: string;
+  locationLegalBusinessName: string;
+  locationLegalAddressLine1: string;
+  locationLegalAddressLine2: string;
+  locationLegalCity: string;
+  locationLegalState: string;
+  locationLegalCountry: string;
+  locationLegalPostcode: string;
+};
 
 router.post(
   '/api/location/createLocation',
@@ -22,13 +44,13 @@ router.post(
 
     const location: NewLocation = requestData.data;
 
-    const existingLocation = await Location.findOne({locationEmail: location.locationEmail})
+    const existingLocation = await Location.findOne({
+      locationEmail: location.locationEmail,
+    });
 
     if (!existingLocation) {
-      throw new BadRequestError("This location doesn't seem to exist!")
-    }
-
-    const createdLocation = Location.build({
+      const createdLocation = Location.build({
+        locationUserId: req.currentUser!.id,
         locationName: location.locationName,
         locationEmail: location.locationEmail,
         locationIndustry: location.locationIndustry,
@@ -43,11 +65,35 @@ router.post(
         locationLegalState: location.locationLegalState,
         locationLegalCountry: location.locationLegalCountry,
         locationLegalPostcode: location.locationLegalPostcode,
-    });
+      });
 
-    await createdLocation.save();
+      const savedLocation = await createdLocation.save();
 
-    res.status(201).send(location);
+      const createLocationResponse: createLocaitonResponse = {
+        locationId: savedLocation.id,
+        locationName: savedLocation.locationName,
+        locationEmail: savedLocation.locationEmail,
+        locationIndustry: savedLocation.locationIndustry,
+        locationRegion: savedLocation.locationRegion,
+        locationCurrency: savedLocation.locationCurrency,
+        locationTimeZone: savedLocation.locationTimeZone,
+        locationSIUnit: savedLocation.locationSIUnit,
+        locationLegalBusinessName: savedLocation.locationLegalBusinessName,
+        locationLegalAddressLine1: savedLocation.locationLegalAddressLine1,
+        locationLegalAddressLine2: savedLocation.locationLegalAddressLine2,
+        locationLegalCity: savedLocation.locationLegalCity,
+        locationLegalState: savedLocation.locationLegalState,
+        locationLegalCountry: savedLocation.locationLegalCountry,
+        locationLegalPostcode: savedLocation.locationLegalPostcode,
+      };
+
+      // TODO: We'll need to inplement a redis cache database so that it won't hit the underlying database everytime it reads
+      // await redisClient.set(savedLocation.id, JSON.stringify(savedLocation));
+
+      res.status(201).send({ ...createLocationResponse });
+    }
+
+    res.status(201).send(existingLocation);
   }
 );
 
