@@ -59,15 +59,15 @@ const locationSchema = new mongoose.Schema(
     locationLegalState: { type: String, required: true },
     locationLegalCountry: { type: String, required: true },
     locationLegalPostcode: { type: String, required: true },
-  },
-  {
-    toJSON: {
-      transform(doc, ret) {
-        ret.id = ret._id;
-        delete ret._id;
-      },
-    },
   }
+  // {
+  //   toJSON: {
+  //     transform(doc, ret) {
+  //       ret.id = ret._id;
+  //       delete ret._id;
+  //     },
+  //   },
+  // }
 );
 
 locationSchema.statics.build = (fields: LocationFields) => {

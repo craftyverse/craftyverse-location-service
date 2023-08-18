@@ -4,7 +4,7 @@ const locationRegionEnum = z.enum(['AUS', 'ENG', 'USA', 'CHN']);
 
 const locationSIUnitEnum = z.enum(['LB', 'KG']);
 
-export const createLocationRequestSchema = z.object({
+export const LocationRequestSchema = z.object({
   locationName: z.string(),
   locationEmail: z.string().email(),
   locationIndustry: z.string(),
@@ -21,6 +21,6 @@ export const createLocationRequestSchema = z.object({
   locationLegalPostcode: z.string(),
 });
 
-export type NewLocation = z.infer<typeof createLocationRequestSchema>;
+export type NewLocation = z.infer<typeof LocationRequestSchema>;
 export type LocationRegionEnum = z.infer<typeof locationRegionEnum>;
 export type LocationSIUnitEnum = z.infer<typeof locationSIUnitEnum>;

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { app } from '../app';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
+import Redis from 'ioredis-mock';
 
 declare global {
   var signup: () => string[];
@@ -10,6 +11,7 @@ declare global {
 
 let mongoDb: any;
 let mongoDbUri: any;
+let redis: any;
 
 // Before all test suite, create a mock mongodb connection along with
 // a connection string

@@ -3,6 +3,7 @@ import 'express-async-errors';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 import { createLocationRouter } from './routes/create-location-route';
+import { getLocationByIdRouter } from './routes/get-location-by-id-route';
 import {
   errorHandler,
   NotFoundError,
@@ -22,6 +23,7 @@ app.use(currentUser);
 
 // Placeholder for location service route
 app.use(createLocationRouter);
+app.use(getLocationByIdRouter);
 
 app.all('*', async () => {
   throw new NotFoundError();

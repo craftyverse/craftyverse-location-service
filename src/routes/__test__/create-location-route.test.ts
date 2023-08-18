@@ -1,7 +1,11 @@
 import request from 'supertest';
 import { app } from '../../app';
 import { Location } from '../../models/Location';
+import redisClient from '../../services/redis-service';
+import Redis from 'ioredis';
+
 describe('POST /api/location/createLocation', () => {
+  let testRedisClient: Redis;
   const payload = {
     locationName: 'Tony',
     locationEmail: 'tony.li@test.io',
@@ -18,6 +22,19 @@ describe('POST /api/location/createLocation', () => {
     locationLegalCountry: 'Australia',
     locationLegalPostcode: '2000',
   };
+
+  beforeEach(() => {
+    testRedisClient = redisClient.getClient({
+      host: 'localhost',
+      port: 6379,
+      password: 'password',
+    });
+  });
+
+  afterAll(() => {
+    testRedisClient.quit();
+  });
+
   describe('## Route request validation', () => {
     it('should return an error if "locationName" mandatory field is null in the request', async () => {
       const response = await request(app)
@@ -51,8 +68,6 @@ describe('POST /api/location/createLocation', () => {
         .post('/api/location/createLocation')
         .set('Cookie', global.signup())
         .send({ ...payload, locationCurrency: null });
-
-      console.log(response.body);
 
       expect(response.status).toEqual(400);
     });
@@ -160,7 +175,6 @@ describe('POST /api/location/createLocation', () => {
       expect(response.status).toEqual(201);
 
       locations = await Location.find({});
-      console.log('locations: ', locations);
 
       expect(locations.length).toEqual(1);
     });
