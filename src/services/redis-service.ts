@@ -23,22 +23,15 @@ const redisClient = (() => {
     return client;
   };
 
-  const set = async (key: string, value: any) => {
+  const set = (key: string, value: any) => {
     const client = getClient();
-    const createdInfo = await client.set(key, JSON.stringify(value));
-    console.log(createdInfo);
+    client.set(key, JSON.stringify(value));
   };
 
   const get = async (key: string) => {
     const client = getClient();
     const value = await client.get(key);
-    console.log('value', value);
-
-    if (value) {
-      return JSON.parse(value);
-    } else {
-      return undefined;
-    }
+    return value;
   };
 
   const ping = async () => {

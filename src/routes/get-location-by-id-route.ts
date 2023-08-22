@@ -1,11 +1,8 @@
 import express, { Request, Response } from 'express';
 import { Location } from '../models/Location';
-import {
-  NotFoundError,
-  RequestValidationError,
-  requireAuth,
-} from '@craftyverse-au/craftyverse-common';
-import { LocationRequestSchema } from '../schemas/location-schema';
+import { NotFoundError, requireAuth } from '@craftyverse-au/craftyverse-common';
+import redisClient from '../services/redis-service';
+import { LocationResponse } from '../schemas/location-schema';
 
 const router = express.Router();
 
@@ -13,13 +10,41 @@ router.get(
   '/api/location/getLocation/:id',
   requireAuth,
   async (req: Request, res: Response) => {
-    console.log('Request body: ', req.body);
+    const locationIdParam = req.params.id;
+    const cachedLocation = await redisClient.get(locationIdParam);
 
-    const existingLocation = await Location.findById(req.params.id);
+    if (cachedLocation) {
+      const locationPayload: LocationResponse = JSON.parse(cachedLocation);
+      res.status(200).send(locationPayload);
+      return;
+    }
+
+    const existingLocation = await Location.findById(locationIdParam);
 
     if (!existingLocation) {
       throw new NotFoundError();
     }
+
+    const locationResponsePayload: LocationResponse = {
+      locationId: existingLocation.id,
+      locationUserId: existingLocation.locationUserId,
+      locationName: existingLocation.locationName,
+      locationEmail: existingLocation.locationEmail,
+      locationIndustry: existingLocation.locationIndustry,
+      locationRegion: existingLocation.locationRegion,
+      locationCurrency: existingLocation.locationCurrency,
+      locationTimeZone: existingLocation.locationTimeZone,
+      locationSIUnit: existingLocation.locationSIUnit,
+      locationLegalBusinessName: existingLocation.locationLegalBusinessName,
+      locationLegalAddressLine1: existingLocation.locationLegalAddressLine1,
+      locationLegalAddressLine2: existingLocation.locationLegalAddressLine2,
+      locationLegalCity: existingLocation.locationLegalCity,
+      locationLegalState: existingLocation.locationLegalState,
+      locationLegalCountry: existingLocation.locationLegalCountry,
+      locationLegalPostcode: existingLocation.locationLegalPostcode,
+    };
+
+    redisClient.set(locationIdParam, locationResponsePayload);
 
     const requestFieldsString = req.query.fields?.toString();
 
@@ -28,23 +53,17 @@ router.get(
       return;
     }
     const requestFieldsArray = requestFieldsString.split(',');
-    console.log(
-      'Query params',
-      typeof requestFieldsString,
-      requestFieldsString
-    );
 
     const filteredLocation: Record<string, any> = {};
 
     requestFieldsArray.map((field: string) => {
-      console.log(field);
       const fieldValue = existingLocation.get(field);
       if (fieldValue !== undefined) {
         filteredLocation[field] = fieldValue;
       }
     });
 
-    res.send(filteredLocation);
+    res.status(200).send(locationResponsePayload);
   }
 );
 

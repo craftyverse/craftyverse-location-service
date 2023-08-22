@@ -6,7 +6,7 @@ interface LocationFields {
   locationEmail: string;
   locationIndustry: string;
   locationRegion: 'AUS' | 'ENG' | 'USA' | 'CHN';
-  locationCurrency: string;
+  locationCurrency: 'AUD' | 'USD' | 'RMB';
   locationTimeZone: string;
   locationSIUnit: 'LB' | 'KG';
   locationLegalBusinessName: string;
@@ -29,8 +29,8 @@ interface LocationDocument extends mongoose.Document {
   locationName: string;
   locationEmail: string;
   locationIndustry: string;
-  locationRegion: 'AUS' | 'ENG' | 'US' | 'CHN';
-  locationCurrency: string;
+  locationRegion: 'AUS' | 'ENG' | 'USA' | 'CHN';
+  locationCurrency: 'AUD' | 'USD' | 'RMB';
   locationTimeZone: string;
   locationSIUnit: 'LB' | 'KG';
   locationLegalBusinessName: string;

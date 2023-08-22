@@ -200,6 +200,23 @@ describe('POST /api/location/createLocation', () => {
   });
 
   describe('## Cache implementation', () => {
-    it('should populate the cache when a location is created', async () => {});
+    it('should populate the cache when a location is created', async () => {
+      let locations = await Location.find({});
+      expect(locations.length).toEqual(0);
+
+      const response = await request(app)
+        .post('/api/location/createLocation')
+        .set('Cookie', global.signup())
+        .send(payload);
+
+      expect(response.status).toEqual(201);
+
+      const cachedLocation = await testRedisClient.get(
+        response.body.locationId
+      );
+      expect(cachedLocation).toEqual(
+        `{\"locationId\":\"${response.body.locationId}\",\"locationUserId\":\"001\",\"locationName\":\"Tony\",\"locationEmail\":\"tony.li@test.io\",\"locationIndustry\":\"Crafts\",\"locationRegion\":\"AUS\",\"locationCurrency\":\"AUD\",\"locationTimeZone\":\"1691220336946\",\"locationSIUnit\":\"KG\",\"locationLegalBusinessName\":\"Craftyverse\",\"locationLegalAddressLine1\":\"21 George St\",\"locationLegalAddressLine2\":\"Sydney\",\"locationLegalCity\":\"Sydney\",\"locationLegalState\":\"NSW\",\"locationLegalCountry\":\"Australia\",\"locationLegalPostcode\":\"2000\"}`
+      );
+    });
   });
 });

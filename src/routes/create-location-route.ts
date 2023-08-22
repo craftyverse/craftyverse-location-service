@@ -1,5 +1,9 @@
 import express, { Request, Response } from 'express';
-import { LocationRequestSchema, NewLocation } from '../schemas/location-schema';
+import {
+  LocationRequestSchema,
+  NewLocationRequest,
+  LocationResponse,
+} from '../schemas/location-schema';
 import {
   BadRequestError,
   RequestValidationError,
@@ -11,24 +15,6 @@ import { Location } from '../models/Location';
 
 const router = express.Router();
 
-type createLocaitonResponse = {
-  locationId: string;
-  locationName: string;
-  locationEmail: string;
-  locationIndustry: string;
-  locationRegion: string;
-  locationCurrency: string;
-  locationTimeZone: string;
-  locationSIUnit: string;
-  locationLegalBusinessName: string;
-  locationLegalAddressLine1: string;
-  locationLegalAddressLine2: string;
-  locationLegalCity: string;
-  locationLegalState: string;
-  locationLegalCountry: string;
-  locationLegalPostcode: string;
-};
-
 router.post(
   '/api/location/createLocation',
   requireAuth,
@@ -39,7 +25,7 @@ router.post(
       throw new RequestValidationError(requestData.error.issues);
     }
 
-    const location: NewLocation = requestData.data;
+    const location: NewLocationRequest = requestData.data;
 
     const existingLocation = await Location.findOne({
       locationEmail: location.locationEmail,
@@ -49,6 +35,7 @@ router.post(
       throw new BadRequestError('This location already exists');
     }
     const createdLocation = Location.build({
+      // This needs to change to the actual userId
       locationUserId: '001',
       locationName: location.locationName,
       locationEmail: location.locationEmail,
@@ -66,31 +53,30 @@ router.post(
       locationLegalPostcode: location.locationLegalPostcode,
     });
 
-    await createdLocation.save();
+    const savedLocation = await createdLocation.save();
 
-    const createLocation: createLocaitonResponse = {
-      locationId: createdLocation.id,
-      locationName: createdLocation.locationName,
-      locationEmail: createdLocation.locationEmail,
-      locationIndustry: createdLocation.locationIndustry,
-      locationRegion: createdLocation.locationRegion,
-      locationCurrency: createdLocation.locationCurrency,
-      locationTimeZone: createdLocation.locationTimeZone,
-      locationSIUnit: createdLocation.locationSIUnit,
-      locationLegalBusinessName: createdLocation.locationLegalBusinessName,
-      locationLegalAddressLine1: createdLocation.locationLegalAddressLine1,
-      locationLegalAddressLine2: createdLocation.locationLegalAddressLine2,
-      locationLegalCity: createdLocation.locationLegalCity,
-      locationLegalState: createdLocation.locationLegalState,
-      locationLegalCountry: createdLocation.locationLegalCountry,
-      locationLegalPostcode: createdLocation.locationLegalPostcode,
+    const createLocation: LocationResponse = {
+      locationId: savedLocation.id,
+      locationUserId: createdLocation.locationUserId,
+      locationName: savedLocation.locationName,
+      locationEmail: savedLocation.locationEmail,
+      locationIndustry: savedLocation.locationIndustry,
+      locationRegion: savedLocation.locationRegion,
+      locationCurrency: savedLocation.locationCurrency,
+      locationTimeZone: savedLocation.locationTimeZone,
+      locationSIUnit: savedLocation.locationSIUnit,
+      locationLegalBusinessName: savedLocation.locationLegalBusinessName,
+      locationLegalAddressLine1: savedLocation.locationLegalAddressLine1,
+      locationLegalAddressLine2: savedLocation.locationLegalAddressLine2,
+      locationLegalCity: savedLocation.locationLegalCity,
+      locationLegalState: savedLocation.locationLegalState,
+      locationLegalCountry: savedLocation.locationLegalCountry,
+      locationLegalPostcode: savedLocation.locationLegalPostcode,
     };
 
-    // TODO: We'll need to inplement a redis cache database so that it won't hit the underlying database everytime it reads
     redisClient.set(createLocation.locationId, createLocation);
-    const cachedLocation = redisClient.get(createLocation.locationId);
 
-    res.status(201).send({ ...(createLocation as createLocaitonResponse) });
+    res.status(201).send({ ...(createLocation as LocationResponse) });
   }
 );
 
