@@ -1,1 +1,0 @@
-# craftyverse-location-service
