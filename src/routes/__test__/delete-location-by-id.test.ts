@@ -1,8 +1,11 @@
 import request from "supertest";
 import { app } from "../../app";
 import mongoose from "mongoose";
+import { Redis } from "ioredis";
+import redisClient from "../../services/redis-service";
 
 describe("DELETE /api/location/deleteLocationById/:id", () => {
+  let testClient: Redis;
   const payload = {
     locationName: "Tony",
     locationEmail: "tony.li@test.io",
@@ -19,6 +22,18 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
   };
+
+  beforeEach(() => {
+    testClient = redisClient.getClient({
+      host: "localhost",
+      port: 6379,
+      password: "password",
+    });
+  });
+
+  afterAll(() => {
+    redisClient.quit();
+  });
   describe("## Request validation", () => {
     it("should return a 401 (unauthorised) if the user is not authenticated", async () => {
       const id = new mongoose.Types.ObjectId().toHexString();
@@ -58,6 +73,23 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
         )
         .set("Cookie", cookie)
         .expect(200);
+
+      const getLocationResponse = await request(app)
+        .get(
+          `/api/location/getLocation/${createLocationResponse.body.locationId}`
+        )
+        .set("Cookie", cookie)
+        .send()
+        .expect(404);
+
+      expect(getLocationResponse.body).toEqual({
+        errors: [
+          {
+            message: "The location that you have requested does not exist",
+            field: "NotFound",
+          },
+        ],
+      });
     });
   });
 });

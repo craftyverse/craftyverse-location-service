@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { Location } from "../models/Location";
 import { NotFoundError, requireAuth } from "@craftyverse-au/craftyverse-common";
+import redisClient from "../services/redis-service";
 
 const router = express.Router();
 
@@ -16,7 +17,8 @@ router.delete(
       throw new NotFoundError("This location does not exist!");
     }
 
-    const deleteResponse = await Location.deleteOne({ id: locationId });
+    await Location.findByIdAndRemove({ _id: locationId });
+    redisClient.remove(locationId);
     res.status(200).send("Your location has been successfully deleted");
   }
 );
