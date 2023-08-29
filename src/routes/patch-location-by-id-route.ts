@@ -67,16 +67,6 @@ router.patch(
       locationLegalPostcode: updatedLocation.locationLegalPostcode,
     };
 
-    const existingCachedLocation = await redisClient.get(
-      updatedLocationResponsePayload.locationId
-    );
-
-    console.log(existingCachedLocation);
-
-    if (existingCachedLocation) {
-      redisClient.remove(updatedLocationResponsePayload.locationId);
-    }
-
     redisClient.set(
       updatedLocationResponsePayload.locationId,
       updatedLocationResponsePayload

@@ -1,8 +1,5 @@
 import request from "supertest";
 import { app } from "../../app";
-import redisClient from "../../services/redis-service";
-import { Redis } from "ioredis";
-import { Location } from "../../models/Location";
 import mongoose from "mongoose";
 
 describe("DELETE /api/location/deleteLocationById/:id", () => {
@@ -47,6 +44,20 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
       });
     });
 
-    it("should successfully delete the location", async () => {});
+    it("should successfully delete the location", async () => {
+      const cookie = global.signup();
+
+      const createLocationResponse = await request(app)
+        .post("/api/location/createLocation")
+        .set("Cookie", cookie)
+        .send({ ...payload });
+
+      await request(app)
+        .delete(
+          `/api/location/deleteLocationById/${createLocationResponse.body.locationId}`
+        )
+        .set("Cookie", cookie)
+        .expect(200);
+    });
   });
 });

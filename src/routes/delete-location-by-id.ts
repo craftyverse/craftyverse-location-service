@@ -17,7 +17,7 @@ router.delete(
     }
 
     const deleteResponse = await Location.deleteOne({ id: locationId });
-    res.status(200).send();
+    res.status(200).send("Your location has been successfully deleted");
   }
 );
 
