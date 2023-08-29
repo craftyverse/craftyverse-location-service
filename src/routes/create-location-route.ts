@@ -51,6 +51,7 @@ router.post(
       locationLegalState: location.locationLegalState,
       locationLegalCountry: location.locationLegalCountry,
       locationLegalPostcode: location.locationLegalPostcode,
+      locationApproved: location.locationApproved,
     });
 
     const savedLocation = await createdLocation.save();
@@ -72,6 +73,7 @@ router.post(
       locationLegalState: savedLocation.locationLegalState,
       locationLegalCountry: savedLocation.locationLegalCountry,
       locationLegalPostcode: savedLocation.locationLegalPostcode,
+      locationApproved: savedLocation.locationApproved,
     };
 
     redisClient.set(createLocation.locationId, createLocation);

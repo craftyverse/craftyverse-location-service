@@ -65,6 +65,7 @@ router.patch(
       locationLegalState: updatedLocation.locationLegalState,
       locationLegalCountry: updatedLocation.locationLegalCountry,
       locationLegalPostcode: updatedLocation.locationLegalPostcode,
+      locationApproved: updatedLocation.locationApproved,
     };
 
     redisClient.set(

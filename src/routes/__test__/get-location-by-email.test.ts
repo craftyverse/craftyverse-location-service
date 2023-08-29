@@ -3,10 +3,11 @@ import { app } from "../../app";
 import mongoose from "mongoose";
 import redisClient from "../../services/redis-service";
 import Redis from "ioredis";
+import { NewLocationRequest } from "../../schemas/location-schema";
 
 describe("GET /api/location/getLocationByEmail/:email", () => {
   let testClient: Redis;
-  const payload = {
+  const payload: NewLocationRequest = {
     locationName: "Tony",
     locationEmail: "tony.li@test.io",
     locationIndustry: "Crafts",
@@ -21,6 +22,7 @@ describe("GET /api/location/getLocationByEmail/:email", () => {
     locationLegalState: "NSW",
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
+    locationApproved: false,
   };
 
   beforeEach(() => {
@@ -115,6 +117,7 @@ describe("GET /api/location/getLocationByEmail/:email", () => {
         locationLegalState: "NSW",
         locationLegalCountry: "Australia",
         locationLegalPostcode: "2000",
+        locationApproved: false,
         __v: 0,
       });
     });

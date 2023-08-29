@@ -22,6 +22,7 @@ describe("GET /api/location/getLocation/:id", () => {
     locationLegalState: "NSW",
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
+    locationApproved: false,
   };
 
   beforeEach(() => {
@@ -116,6 +117,7 @@ describe("GET /api/location/getLocation/:id", () => {
         locationLegalState: "NSW",
         locationLegalCountry: "Australia",
         locationLegalPostcode: "2000",
+        locationApproved: false,
       });
     });
   });
@@ -141,7 +143,7 @@ describe("GET /api/location/getLocation/:id", () => {
       );
 
       expect(cachedLocation).toEqual(
-        `{"locationId":"${getLocationResponse.body.locationId}","locationUserId":"${getLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000"}`
+        `{"locationId":"${getLocationResponse.body.locationId}","locationUserId":"${getLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
       );
     });
 
@@ -180,11 +182,12 @@ describe("GET /api/location/getLocation/:id", () => {
         locationLegalState: payload.locationLegalState,
         locationLegalCountry: payload.locationLegalCountry,
         locationLegalPostcode: payload.locationLegalPostcode,
+        locationApproved: payload.locationApproved,
       });
 
       const savedLocation = await createdLocation.save();
 
-      await request(app)
+      const location = await request(app)
         .get(`/api/location/getLocation/${savedLocation.id}`)
         .set("Cookie", global.signup())
         .send()
@@ -193,7 +196,7 @@ describe("GET /api/location/getLocation/:id", () => {
       const cachedLocation = await testClient.get(savedLocation.id);
 
       expect(cachedLocation).toEqual(
-        `{"locationId":"${createdLocation.id}","locationUserId":"${createdLocation.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000"}`
+        `{"locationId":"${createdLocation.id}","locationUserId":"${createdLocation.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
       );
     });
   });

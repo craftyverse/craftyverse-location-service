@@ -16,6 +16,7 @@ interface LocationFields {
   locationLegalState: string;
   locationLegalCountry: string;
   locationLegalPostcode: string;
+  locationApproved: boolean;
 }
 
 // Properties that a location model (database) requires
@@ -40,6 +41,7 @@ interface LocationDocument extends mongoose.Document {
   locationLegalState: string;
   locationLegalCountry: string;
   locationLegalPostcode: string;
+  locationApproved: boolean;
 }
 
 const locationSchema = new mongoose.Schema(
@@ -59,6 +61,7 @@ const locationSchema = new mongoose.Schema(
     locationLegalState: { type: String, required: true },
     locationLegalCountry: { type: String, required: true },
     locationLegalPostcode: { type: String, required: true },
+    locationApproved: { type: Boolean, required: true },
   },
   {
     toJSON: {

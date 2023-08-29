@@ -21,6 +21,7 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
     locationLegalState: "NSW",
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
+    locationApproved: false,
   };
 
   beforeEach(() => {

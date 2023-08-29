@@ -19,6 +19,7 @@ export const LocationRequestSchema = z.object({
   locationLegalState: z.string(),
   locationLegalCountry: z.string(),
   locationLegalPostcode: z.string(),
+  locationApproved: z.boolean(),
 });
 
 export const LocationResponseSchema = z.object({
@@ -38,6 +39,7 @@ export const LocationResponseSchema = z.object({
   locationLegalState: z.string(),
   locationLegalCountry: z.string(),
   locationLegalPostcode: z.string(),
+  locationApproved: z.boolean(),
 });
 
 export type NewLocationRequest = z.infer<typeof LocationRequestSchema>;

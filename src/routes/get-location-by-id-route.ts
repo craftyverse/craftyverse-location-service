@@ -49,6 +49,7 @@ router.get(
       locationLegalState: existingLocation.locationLegalState,
       locationLegalCountry: existingLocation.locationLegalCountry,
       locationLegalPostcode: existingLocation.locationLegalPostcode,
+      locationApproved: existingLocation.locationApproved,
     };
 
     redisClient.set(locationIdParam, locationResponsePayload);
