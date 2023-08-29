@@ -7,6 +7,7 @@ import { createLocationRouter } from "./routes/create-location-route";
 import { getLocationByIdRouter } from "./routes/get-location-by-id-route";
 import { patchLocationByIdRouter } from "./routes/patch-location-by-id-route";
 import { getLocationByEmailRouter } from "./routes/get-location-by-email";
+import { deleteLocationById } from "./routes/delete-location-by-id";
 import {
   currentUser,
   errorHandler,
@@ -30,6 +31,7 @@ app.use(createLocationRouter);
 app.use(getLocationByIdRouter);
 app.use(patchLocationByIdRouter);
 app.use(getLocationByEmailRouter);
+app.use(deleteLocationById);
 
 app.all("*", async () => {
   throw new NotFoundError("The route that you have requested does not exist");

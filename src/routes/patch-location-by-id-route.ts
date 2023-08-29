@@ -1,20 +1,21 @@
-import express, { Request, Response } from 'express';
-import { Location } from '../models/Location';
+import express, { Request, Response } from "express";
+import { Location } from "../models/Location";
 import {
   BadRequestError,
   RequestValidationError,
   requireAuth,
   NotAuthorisedError,
   NotFoundError,
-} from '@craftyverse-au/craftyverse-common';
-import { PatchLocationfieldSchema } from '../schemas/patch-location-schema';
+} from "@craftyverse-au/craftyverse-common";
+import { PatchLocationfieldSchema } from "../schemas/patch-location-schema";
 
-import { LocationResponse } from '../schemas/location-schema';
+import { LocationResponse } from "../schemas/location-schema";
+import redisClient from "../services/redis-service";
 
 const router = express.Router();
 
 router.patch(
-  '/api/location/patchLocationById/:id',
+  "/api/location/patchLocationById/:id",
   requireAuth,
   async (req: Request, res: Response) => {
     const locationId = req.params.id;
@@ -31,7 +32,7 @@ router.patch(
     const existingLocation = await Location.findById(locationId);
 
     if (!existingLocation) {
-      throw new NotFoundError('The location does not exist');
+      throw new NotFoundError("The location does not exist");
     }
 
     if (existingLocation.locationUserId !== req.currentUser!.userId) {
@@ -44,7 +45,7 @@ router.patch(
     );
 
     if (!updatedLocation) {
-      throw new BadRequestError('We could not update your location');
+      throw new BadRequestError("We could not update your location");
     }
 
     const updatedLocationResponsePayload: LocationResponse = {
@@ -65,6 +66,21 @@ router.patch(
       locationLegalCountry: updatedLocation.locationLegalCountry,
       locationLegalPostcode: updatedLocation.locationLegalPostcode,
     };
+
+    const existingCachedLocation = await redisClient.get(
+      updatedLocationResponsePayload.locationId
+    );
+
+    console.log(existingCachedLocation);
+
+    if (existingCachedLocation) {
+      redisClient.remove(updatedLocationResponsePayload.locationId);
+    }
+
+    redisClient.set(
+      updatedLocationResponsePayload.locationId,
+      updatedLocationResponsePayload
+    );
 
     res.status(200).send(updatedLocationResponsePayload);
   }

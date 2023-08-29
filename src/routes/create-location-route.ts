@@ -1,25 +1,24 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response } from "express";
 import {
   LocationRequestSchema,
   NewLocationRequest,
   LocationResponse,
-} from '../schemas/location-schema';
+} from "../schemas/location-schema";
 import {
   BadRequestError,
   RequestValidationError,
   requireAuth,
-} from '@craftyverse-au/craftyverse-common';
-import redisClient from '../services/redis-service';
+} from "@craftyverse-au/craftyverse-common";
+import redisClient from "../services/redis-service";
 
-import { Location } from '../models/Location';
+import { Location } from "../models/Location";
 
 const router = express.Router();
 
 router.post(
-  '/api/location/createLocation',
+  "/api/location/createLocation",
   requireAuth,
   async (req: Request, res: Response) => {
-    console.log('session: ', req.currentUser!.userId);
     const requestData = LocationRequestSchema.safeParse(req.body);
 
     if (!requestData.success) {
@@ -33,7 +32,7 @@ router.post(
     });
 
     if (existingLocation) {
-      throw new BadRequestError('This location already exists');
+      throw new BadRequestError("This location already exists");
     }
     const createdLocation = Location.build({
       // This needs to change to the actual userId

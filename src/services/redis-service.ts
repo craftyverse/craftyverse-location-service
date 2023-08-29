@@ -53,12 +53,18 @@ const redisClient = (() => {
     return await client.quit();
   };
 
+  const remove = (key: string) => {
+    const client = getClient();
+    return client.del(key);
+  };
+
   return {
     getClient,
     get,
     set,
     ping,
     quit,
+    remove,
   };
 })();
 

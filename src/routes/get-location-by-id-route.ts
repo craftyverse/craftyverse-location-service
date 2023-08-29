@@ -1,22 +1,19 @@
-import express, { Request, Response } from 'express';
-import { Location } from '../models/Location';
+import express, { Request, Response } from "express";
+import { Location } from "../models/Location";
 import {
   NotFoundError,
   currentUser,
   requireAuth,
-} from '@craftyverse-au/craftyverse-common';
-import redisClient from '../services/redis-service';
-import { LocationResponse } from '../schemas/location-schema';
+} from "@craftyverse-au/craftyverse-common";
+import redisClient from "../services/redis-service";
+import { LocationResponse } from "../schemas/location-schema";
 
 const router = express.Router();
 
 router.get(
-  '/api/location/getLocation/:id',
+  "/api/location/getLocation/:id",
   requireAuth,
   async (req: Request, res: Response) => {
-    const currentUser = req.currentUser;
-    console.log('current user: in route: ', currentUser);
-    console.log('This is the request session: ', req.session);
     const locationIdParam = req.params.id;
     const requestFieldsString = req.query.fields?.toString();
     const cachedLocation = await redisClient.get(locationIdParam);
@@ -31,7 +28,7 @@ router.get(
 
     if (!existingLocation) {
       throw new NotFoundError(
-        'The location that you have requested does not exist'
+        "The location that you have requested does not exist"
       );
     }
 
@@ -60,7 +57,7 @@ router.get(
       res.send(existingLocation);
       return;
     }
-    const requestFieldsArray = requestFieldsString.split(',');
+    const requestFieldsArray = requestFieldsString.split(",");
 
     const filteredLocation: Record<string, any> = {};
 
