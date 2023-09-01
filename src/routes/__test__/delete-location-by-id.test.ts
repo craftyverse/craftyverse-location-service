@@ -3,6 +3,7 @@ import { app } from "../../app";
 import mongoose from "mongoose";
 import { Redis } from "ioredis";
 import redisClient from "../../services/redis-service";
+import { natsWrapper } from "../../services/nats-wrapper";
 
 describe("DELETE /api/location/deleteLocationById/:id", () => {
   let testClient: Redis;
@@ -25,6 +26,8 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     testClient = redisClient.getClient({
       host: "localhost",
       port: 6379,
@@ -74,6 +77,43 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
         )
         .set("Cookie", cookie)
         .expect(200);
+
+      const getLocationResponse = await request(app)
+        .get(
+          `/api/location/getLocation/${createLocationResponse.body.locationId}`
+        )
+        .set("Cookie", cookie)
+        .send()
+        .expect(404);
+
+      expect(getLocationResponse.body).toEqual({
+        errors: [
+          {
+            message: "The location that you have requested does not exist",
+            field: "NotFound",
+          },
+        ],
+      });
+    });
+  });
+
+  describe("## Event publishing validation", () => {
+    it("should successfully publish a LocationDeletedEvent upon successful location deletion", async () => {
+      const cookie = global.signup();
+
+      const createLocationResponse = await request(app)
+        .post("/api/location/createLocation")
+        .set("Cookie", cookie)
+        .send({ ...payload });
+
+      await request(app)
+        .delete(
+          `/api/location/deleteLocationById/${createLocationResponse.body.locationId}`
+        )
+        .set("Cookie", cookie)
+        .expect(200);
+
+      expect(natsWrapper.client.publish).toHaveBeenCalledTimes(2);
 
       const getLocationResponse = await request(app)
         .get(

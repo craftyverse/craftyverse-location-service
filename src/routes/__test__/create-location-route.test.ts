@@ -3,6 +3,7 @@ import { app } from "../../app";
 import { Location } from "../../models/Location";
 import redisClient from "../../services/redis-service";
 import Redis from "ioredis";
+import { natsWrapper } from "../../services/nats-wrapper";
 
 describe("POST /api/location/createLocation", () => {
   let testRedisClient: Redis;
@@ -218,6 +219,26 @@ describe("POST /api/location/createLocation", () => {
       expect(cachedLocation).toEqual(
         `{\"locationId\":\"${response.body.locationId}\",\"locationUserId\":\"${response.body.locationUserId}\",\"locationName\":\"Tony\",\"locationEmail\":\"tony.li@test.io\",\"locationIndustry\":\"Crafts\",\"locationRegion\":\"AUS\",\"locationCurrency\":\"AUD\",\"locationTimeZone\":\"1691220336946\",\"locationSIUnit\":\"KG\",\"locationLegalBusinessName\":\"Craftyverse\",\"locationLegalAddressLine1\":\"21 George St\",\"locationLegalAddressLine2\":\"Sydney\",\"locationLegalCity\":\"Sydney\",\"locationLegalState\":\"NSW\",\"locationLegalCountry\":\"Australia\",\"locationLegalPostcode\":\"2000\",\"locationApproved\":false}`
       );
+    });
+  });
+
+  describe("## Event publishing validation", () => {
+    it("should publish a LocationCreatedEvent when a location is successfully saved into database", async () => {
+      let locations = await Location.find({});
+      expect(locations.length).toEqual(0);
+
+      const response = await request(app)
+        .post("/api/location/createLocation")
+        .set("Cookie", global.signup())
+        .send(payload);
+
+      expect(response.status).toEqual(201);
+
+      locations = await Location.find({});
+
+      expect(locations.length).toEqual(1);
+
+      expect(natsWrapper.client.publish).toHaveBeenCalledTimes(1);
     });
   });
 });

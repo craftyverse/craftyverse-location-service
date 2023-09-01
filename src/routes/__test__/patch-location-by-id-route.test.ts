@@ -3,6 +3,7 @@ import { app } from "../../app";
 import mongoose from "mongoose";
 import redisClient from "../../services/redis-service";
 import Redis from "ioredis";
+import { natsWrapper } from "../../services/nats-wrapper";
 
 describe("PATCH /api/location/patchLocation/:id", () => {
   let testClient: Redis;
@@ -25,6 +26,8 @@ describe("PATCH /api/location/patchLocation/:id", () => {
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     testClient = redisClient.getClient({
       host: "localhost",
       port: 6379,
@@ -312,6 +315,51 @@ describe("PATCH /api/location/patchLocation/:id", () => {
       expect(updatedCacheLocation).toEqual(
         `{"locationId":"${patchLocationResponse.body.locationId}","locationUserId":"${patchLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@testemail.com.au","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
       );
+    });
+  });
+
+  describe("## Event publishing validation", () => {
+    it("should successfully publish a LocationPatchedEvent upon updating the location", async () => {
+      const updatedFields = {
+        locationEmail: "tony.li@testemail.com.au",
+      };
+
+      const cookie = global.signup();
+
+      const createLocationResponse = await request(app)
+        .post("/api/location/createLocation")
+        .set("Cookie", cookie)
+        .send({ ...payload });
+
+      const patchLocationResponse = await request(app)
+        .patch(
+          `/api/location/patchLocationById/${createLocationResponse.body.locationId}`
+        )
+        .set("Cookie", cookie)
+        .send({ ...updatedFields })
+        .expect(200);
+
+      expect(patchLocationResponse.body).toEqual({
+        locationId: createLocationResponse.body.locationId,
+        locationUserId: createLocationResponse.body.locationUserId,
+        locationName: "Tony",
+        locationEmail: updatedFields.locationEmail,
+        locationIndustry: "Crafts",
+        locationRegion: "AUS",
+        locationCurrency: "AUD",
+        locationTimeZone: "1691220336946",
+        locationSIUnit: "KG",
+        locationLegalBusinessName: "Craftyverse",
+        locationLegalAddressLine1: "21 George St",
+        locationLegalAddressLine2: "Sydney",
+        locationLegalCity: "Sydney",
+        locationLegalState: "NSW",
+        locationLegalCountry: "Australia",
+        locationLegalPostcode: "2000",
+        locationApproved: false,
+      });
+      // Expecting two event publish calls due to one creation and path router calls
+      expect(natsWrapper.client.publish).toHaveBeenCalledTimes(2);
     });
   });
 });
