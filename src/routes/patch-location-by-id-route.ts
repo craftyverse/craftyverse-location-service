@@ -11,6 +11,8 @@ import { PatchLocationfieldSchema } from "../schemas/patch-location-schema";
 
 import { LocationResponse } from "../schemas/location-schema";
 import redisClient from "../services/redis-service";
+import { LocationPatchedPublisher } from "../events/publishers/location-patched-publisher";
+import { natsWrapper } from "../services/nats-wrapper";
 
 const router = express.Router();
 
@@ -72,6 +74,10 @@ router.patch(
       updatedLocationResponsePayload.locationId,
       updatedLocationResponsePayload
     );
+
+    new LocationPatchedPublisher(natsWrapper.client).publish({
+      ...updatedLocationResponsePayload,
+    });
 
     res.status(200).send(updatedLocationResponsePayload);
   }

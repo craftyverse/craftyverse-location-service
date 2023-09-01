@@ -9,6 +9,8 @@ declare global {
 let mongoDb: any;
 let mongoDbUri: any;
 
+jest.mock("../services/nats-wrapper");
+
 // Before all test suite, create a mock mongodb connection along with
 // a connection string
 beforeAll(async () => {
@@ -21,6 +23,7 @@ beforeAll(async () => {
 
 // Before each test, clear existing mongodb collections
 beforeEach(async () => {
+  jest.clearAllMocks();
   const collections = await mongoose.connection.db.collections();
   collections.map(async (collection) => {
     await collection.deleteMany({});

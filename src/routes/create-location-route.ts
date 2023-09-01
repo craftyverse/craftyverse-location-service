@@ -12,6 +12,8 @@ import {
 import redisClient from "../services/redis-service";
 
 import { Location } from "../models/Location";
+import { LocationCreatedPublisher } from "../events/publishers/location-created-publisher";
+import { natsWrapper } from "../services/nats-wrapper";
 
 const router = express.Router();
 
@@ -58,7 +60,7 @@ router.post(
 
     const createLocation: LocationResponse = {
       locationId: savedLocation.id,
-      locationUserId: createdLocation.locationUserId,
+      locationUserId: savedLocation.locationUserId,
       locationName: savedLocation.locationName,
       locationEmail: savedLocation.locationEmail,
       locationIndustry: savedLocation.locationIndustry,
@@ -77,6 +79,11 @@ router.post(
     };
 
     redisClient.set(createLocation.locationId, createLocation);
+
+    // Publish an locationCreatedEvent
+    new LocationCreatedPublisher(natsWrapper.client).publish({
+      ...createLocation,
+    });
 
     res.status(201).send({ ...(createLocation as LocationResponse) });
   }
