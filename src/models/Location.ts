@@ -16,6 +16,7 @@ interface LocationFields {
   locationLegalState: string;
   locationLegalCountry: string;
   locationLegalPostcode: string;
+  //This might change into a locationApproved status enum
   locationApproved: boolean;
 }
 
