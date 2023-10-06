@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import { app } from "./app";
 import redisClient from "./services/redis-service";
-import { natsWrapper } from "./services/nats-wrapper";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -14,6 +13,10 @@ const start = async () => {
 
   if (!process.env.REDIS_PASSWORD) {
     console.log(process.env.REDIS_PASSWORD);
+  }
+
+  if (!process.env.AWS_LOCALSTACK_URI) {
+    throw new Error("AWS_LOCALSTACK_URI is not supplied!");
   }
 
   redisClient.ping();

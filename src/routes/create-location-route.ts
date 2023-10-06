@@ -10,10 +10,17 @@ import {
   requireAuth,
 } from "@craftyverse-au/craftyverse-common";
 import redisClient from "../services/redis-service";
+import { awsSnsClient } from "../services/sns-service";
+import { awsSqsClient } from "../services/sqs-service";
+import { awsConfig } from "../config/aws-config";
 
 import { Location } from "../models/Location";
-import { LocationCreatedPublisher } from "../events/publishers/location-created-publisher";
-import { natsWrapper } from "../services/nats-wrapper";
+import { createLocationCreatedTopic } from "../events/create-event-definitions";
+import {
+  CreateQueueCommandInput,
+  SQSClient,
+  SQSClientConfig,
+} from "@aws-sdk/client-sqs";
 
 const router = express.Router();
 
@@ -80,10 +87,56 @@ router.post(
 
     redisClient.set(createLocation.locationId, createLocation);
 
-    // Publish an locationCreatedEvent
-    new LocationCreatedPublisher(natsWrapper.client).publish({
-      ...createLocation,
-    });
+    // Stringify the response payload
+    const createLocationResponseString = JSON.stringify(createLocation);
+    console.log(
+      "This is the create location response string: ",
+      createLocationResponseString
+    );
+
+    const topicArn = await createLocationCreatedTopic();
+    console.log("This is the topic ARN: ", topicArn);
+
+    const sqsQueueAttributes = {
+      delaySeconds: "0",
+      messageRetentionPeriod: "604800", // 7 days
+      receiveMessageWaitTimeSeconds: "0",
+    };
+
+    const createLocationQueue = await awsSqsClient.createSqsQueue(
+      awsConfig as SQSClient,
+      "location_created_queue",
+      sqsQueueAttributes
+    );
+
+    console.log("This is the new queue: ", createLocationQueue);
+
+    const allSqsQueues = await awsSqsClient.listAllSqsQueues(
+      awsConfig as SQSClient,
+      {
+        queueNamePrefix: "location_created_queue",
+        maxResults: 10,
+      }
+    );
+
+    console.log("list of queues: ", allSqsQueues);
+
+    const publishSnsMessageParams = {
+      message: createLocationResponseString,
+      subject: "create-location-event",
+      topicArn: topicArn,
+    };
+
+    const createdLocationMessage = await awsSnsClient.publishSnsMessage(
+      awsConfig,
+      publishSnsMessageParams
+    );
+
+    console.log(createdLocationMessage);
+
+    if (createdLocationMessage?.$metadata.httpStatusCode !== 200) {
+      throw new BadRequestError("Something went wrong!");
+    }
 
     res.status(201).send({ ...(createLocation as LocationResponse) });
   }
