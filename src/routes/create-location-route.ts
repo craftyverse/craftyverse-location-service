@@ -8,19 +8,14 @@ import {
   BadRequestError,
   RequestValidationError,
   requireAuth,
+  awsSnsClient,
+  awsSqsClient,
 } from "@craftyverse-au/craftyverse-common";
 import redisClient from "../services/redis-service";
-import { awsSnsClient } from "../services/sns-service";
-import { awsSqsClient } from "../services/sqs-service";
 import { awsConfig } from "../config/aws-config";
-
 import { Location } from "../models/Location";
-import { createLocationCreatedTopic } from "../events/create-event-definitions";
-import {
-  CreateQueueCommandInput,
-  SQSClient,
-  SQSClientConfig,
-} from "@aws-sdk/client-sqs";
+import { locationEventVariables } from "../events/event-variables";
+import { SQSClientConfig } from "@aws-sdk/client-sqs";
 
 const router = express.Router();
 
@@ -89,37 +84,17 @@ router.post(
 
     // Stringify the response payload
     const createLocationResponseString = JSON.stringify(createLocation);
-    console.log(
-      "This is the create location response string: ",
-      createLocationResponseString
+
+    const topicArn = await awsSnsClient.getFullTopicArnByTopicName(
+      awsConfig,
+      locationEventVariables.LOCATION_CREATED_EVENT
     );
 
-    const topicArn = await createLocationCreatedTopic();
-    console.log("This is the topic ARN: ", topicArn);
+    console.log("This is the topicArn: ", topicArn);
 
-    const sqsQueueAttributes = {
-      delaySeconds: "0",
-      messageRetentionPeriod: "604800", // 7 days
-      receiveMessageWaitTimeSeconds: "0",
-    };
-
-    const createLocationQueue = await awsSqsClient.createSqsQueue(
-      awsConfig as SQSClient,
-      "location_created_queue",
-      sqsQueueAttributes
-    );
-
-    console.log("This is the new queue: ", createLocationQueue);
-
-    const allSqsQueues = await awsSqsClient.listAllSqsQueues(
-      awsConfig as SQSClient,
-      {
-        queueNamePrefix: "location_created_queue",
-        maxResults: 10,
-      }
-    );
-
-    console.log("list of queues: ", allSqsQueues);
+    if (!topicArn) {
+      throw new BadRequestError("Something went wrong!");
+    }
 
     const publishSnsMessageParams = {
       message: createLocationResponseString,

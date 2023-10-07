@@ -1,11 +1,13 @@
-import { awsSnsClient } from "../services/sns-service";
+import { awsSnsClient } from "@craftyverse-au/craftyverse-common";
 import { awsConfig } from "../config/aws-config";
+import { locationEventVariables } from "./event-variables";
 
 export const createLocationCreatedTopic = async (): Promise<string> => {
-  const locationCreatedTopic = "location-created";
+  const locationCreatedTopic = locationEventVariables.LOCATION_CREATED_EVENT;
   const createdTopic = await awsSnsClient.createSnsTopic(
     awsConfig,
     locationCreatedTopic
   );
+
   return createdTopic.topicArn;
 };
