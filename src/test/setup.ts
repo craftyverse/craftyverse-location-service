@@ -1,6 +1,11 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { SNSClient } from "@aws-sdk/client-sns";
+import { awsSnsClient, awsSqsClient } from "@craftyverse-au/craftyverse-common";
+import { createLocationCreatedTopic } from "../events/create-event-definitions";
+import { SQSClient, SQSClientConfig } from "@aws-sdk/client-sqs";
+import { locationQueueVariables } from "../events/event-variables";
 
 declare global {
   var signup: () => string[];
@@ -8,8 +13,9 @@ declare global {
 
 let mongoDb: any;
 let mongoDbUri: any;
-
-jest.mock("../services/nats-wrapper");
+let testSnsClient: SNSClient;
+let testSnsTopic: string;
+let testSqsClient: SQSClient;
 
 // Before all test suite, create a mock mongodb connection along with
 // a connection string
@@ -25,15 +31,43 @@ beforeAll(async () => {
 beforeEach(async () => {
   jest.clearAllMocks();
   const collections = await mongoose.connection.db.collections();
+  const mockAwsConfig = {
+    credentials: {
+      accessKeyId: "aws_access_key_id",
+      secretAccessKey: "aws_secret_access_key",
+    },
+    region: "us-east-1",
+    endpoint: "http://localhost:4666",
+  };
+
+  const sqsQueueAttributes = {
+    delaySeconds: "0",
+    messageRetentionPeriod: "604800", // 7 days
+    receiveMessageWaitTimeSeconds: "0",
+  };
+
   collections.map(async (collection) => {
     await collection.deleteMany({});
   });
+
+  testSnsClient = awsSnsClient.createSnsClient(mockAwsConfig);
+  testSqsClient = awsSqsClient.createSqsClient(mockAwsConfig);
+
+  testSnsTopic = await createLocationCreatedTopic();
+
+  await awsSqsClient.createSqsQueue(
+    mockAwsConfig as SQSClientConfig,
+    locationQueueVariables.LOCATION_CREATED_QUEUE,
+    sqsQueueAttributes
+  );
 });
 
 // Close conenction after test suite
 afterAll(async () => {
   await mongoDb.stop();
   await mongoose.connection.close();
+  testSnsClient.destroy();
+  testSqsClient.destroy();
 });
 
 global.signup = () => {

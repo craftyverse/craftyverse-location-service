@@ -15,7 +15,6 @@ import redisClient from "../services/redis-service";
 import { awsConfig } from "../config/aws-config";
 import { Location } from "../models/Location";
 import { locationEventVariables } from "../events/event-variables";
-import { SQSClientConfig } from "@aws-sdk/client-sqs";
 
 const router = express.Router();
 
@@ -38,8 +37,18 @@ router.post(
     if (existingLocation) {
       throw new BadRequestError("This location already exists");
     }
+
+    const topicArn = await awsSnsClient.getFullTopicArnByTopicName(
+      awsConfig,
+      locationEventVariables.LOCATION_CREATED_EVENT
+    );
+
+    console.log("This is the topicArn: ", topicArn);
+
+    if (!topicArn) {
+      throw new BadRequestError("Something went wrong!");
+    }
     const createdLocation = Location.build({
-      // This needs to change to the actual userId
       locationUserId: req.currentUser!.userId,
       locationName: location.locationName,
       locationEmail: location.locationEmail,
@@ -85,20 +94,9 @@ router.post(
     // Stringify the response payload
     const createLocationResponseString = JSON.stringify(createLocation);
 
-    const topicArn = await awsSnsClient.getFullTopicArnByTopicName(
-      awsConfig,
-      locationEventVariables.LOCATION_CREATED_EVENT
-    );
-
-    console.log("This is the topicArn: ", topicArn);
-
-    if (!topicArn) {
-      throw new BadRequestError("Something went wrong!");
-    }
-
     const publishSnsMessageParams = {
       message: createLocationResponseString,
-      subject: "create-location-event",
+      subject: "create_location_event",
       topicArn: topicArn,
     };
 

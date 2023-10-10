@@ -4,7 +4,8 @@ import redisClient from "./services/redis-service";
 import { createLocationCreatedTopic } from "./events/create-event-definitions";
 import { awsSqsClient } from "@craftyverse-au/craftyverse-common";
 import { awsConfig } from "./config/aws-config";
-import { SQSClient, SQSClientConfig } from "@aws-sdk/client-sqs";
+import { SQSClientConfig } from "@aws-sdk/client-sqs";
+import { locationQueueVariables } from "./events/event-variables";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -37,7 +38,7 @@ const start = async () => {
 
   const createLocationQueue = await awsSqsClient.createSqsQueue(
     awsConfig as SQSClientConfig,
-    "location_created_queue",
+    locationQueueVariables.LOCATION_CREATED_QUEUE,
     sqsQueueAttributes
   );
 
