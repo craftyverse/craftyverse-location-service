@@ -5,7 +5,7 @@ import { createLocationCreatedTopic } from "./events/create-event-definitions";
 import { awsSqsClient } from "@craftyverse-au/craftyverse-common";
 import { awsConfig } from "./config/aws-config";
 import { SQSClientConfig } from "@aws-sdk/client-sqs";
-import { locationQueueVariables } from "./events/event-variables";
+import { locationQueueVariables } from "./events/variables";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
