@@ -6,5 +6,5 @@ export const awsConfig: SNSClientConfig = {
     secretAccessKey: process.env.AWS_SECRET!,
   },
   region: process.env.AWS_REGION!,
-  endpoint: process.env.AWS_LOCALSTACK_URI!,
+  endpoint: process.env.LOCALSTACK_HOST_URL!,
 };

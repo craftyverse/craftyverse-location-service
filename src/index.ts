@@ -5,7 +5,7 @@ import { createLocationCreatedTopic } from "./events/create-event-definitions";
 import { awsSqsClient } from "@craftyverse-au/craftyverse-common";
 import { awsConfig } from "./config/aws-config";
 import { SQSClientConfig } from "@aws-sdk/client-sqs";
-import { locationQueueVariables } from "./events/variables";
+import { locationQueueVariables } from "./events/event-variables";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -20,8 +20,8 @@ const start = async () => {
     console.log(process.env.REDIS_PASSWORD);
   }
 
-  if (!process.env.AWS_LOCALSTACK_URI) {
-    throw new Error("AWS_LOCALSTACK_URI is not supplied!");
+  if (!process.env.LOCALSTACK_HOST_URL) {
+    throw new Error("LOCALSTACK_HOST_URL is not supplied!");
   }
 
   redisClient.ping();

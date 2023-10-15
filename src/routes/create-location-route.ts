@@ -14,7 +14,7 @@ import {
 import redisClient from "../services/redis-service";
 import { awsConfig } from "../config/aws-config";
 import { Location } from "../models/Location";
-import { locationEventVariables } from "../events/variables";
+import { locationEventVariables } from "../events/event-variables";
 
 const router = express.Router();
 
