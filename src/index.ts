@@ -2,10 +2,12 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import redisClient from "./services/redis-service";
 import { createLocationCreatedTopic } from "./events/create-event-definitions";
-import { awsSqsClient } from "@craftyverse-au/craftyverse-common";
+import {
+  awsSqsClient,
+  locationQueueVariables,
+} from "@craftyverse-au/craftyverse-common";
 import { awsConfig } from "./config/aws-config";
 import { SQSClientConfig } from "@aws-sdk/client-sqs";
-import { locationQueueVariables } from "./events/event-variables";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {

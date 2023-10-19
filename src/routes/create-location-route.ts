@@ -10,11 +10,11 @@ import {
   requireAuth,
   awsSnsClient,
   awsSqsClient,
+  locationEventVariables,
 } from "@craftyverse-au/craftyverse-common";
 import redisClient from "../services/redis-service";
 import { awsConfig } from "../config/aws-config";
 import { Location } from "../models/Location";
-import { locationEventVariables } from "../events/event-variables";
 
 const router = express.Router();
 
@@ -96,7 +96,7 @@ router.post(
 
     const publishSnsMessageParams = {
       message: createLocationResponseString,
-      subject: "create_location_event",
+      subject: locationEventVariables.LOCATION_CREATED_EVENT,
       topicArn: topicArn,
     };
 
