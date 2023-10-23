@@ -30,7 +30,7 @@ const start = async () => {
 
   // Create SNS location created Topic and SQS location created Queue
   const topicArn = await createLocationCreatedTopic();
-  console.log("This is the topic ARN: ", topicArn);
+  console.log("This is the create location topic ARN: ", topicArn);
 
   const sqsQueueAttributes = {
     delaySeconds: "0",
@@ -44,7 +44,7 @@ const start = async () => {
     sqsQueueAttributes
   );
 
-  console.log("This is the new queue: ", createLocationQueue);
+  console.log("This is the new location queue: ", createLocationQueue);
 
   try {
     console.log("connecting to mongodb...");
