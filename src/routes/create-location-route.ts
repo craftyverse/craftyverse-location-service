@@ -8,12 +8,13 @@ import {
   BadRequestError,
   RequestValidationError,
   requireAuth,
+  awsSnsClient,
+  awsSqsClient,
+  locationEventVariables,
 } from "@craftyverse-au/craftyverse-common";
 import redisClient from "../services/redis-service";
-
+import { awsConfig } from "../config/aws-config";
 import { Location } from "../models/Location";
-import { LocationCreatedPublisher } from "../events/publishers/location-created-publisher";
-import { natsWrapper } from "../services/nats-wrapper";
 
 const router = express.Router();
 
@@ -36,8 +37,18 @@ router.post(
     if (existingLocation) {
       throw new BadRequestError("This location already exists");
     }
+
+    const topicArn = await awsSnsClient.getFullTopicArnByTopicName(
+      awsConfig,
+      locationEventVariables.LOCATION_CREATED_EVENT
+    );
+
+    console.log("This is the topicArn: ", topicArn);
+
+    if (!topicArn) {
+      throw new BadRequestError("Something went wrong!");
+    }
     const createdLocation = Location.build({
-      // This needs to change to the actual userId
       locationUserId: req.currentUser!.userId,
       locationName: location.locationName,
       locationEmail: location.locationEmail,
@@ -80,10 +91,25 @@ router.post(
 
     redisClient.set(createLocation.locationId, createLocation);
 
-    // Publish an locationCreatedEvent
-    new LocationCreatedPublisher(natsWrapper.client).publish({
-      ...createLocation,
-    });
+    // Stringify the response payload
+    const createLocationResponseString = JSON.stringify(createLocation);
+
+    const publishSnsMessageParams = {
+      message: createLocationResponseString,
+      subject: locationEventVariables.LOCATION_CREATED_EVENT,
+      topicArn: topicArn,
+    };
+
+    const createdLocationMessage = await awsSnsClient.publishSnsMessage(
+      awsConfig,
+      publishSnsMessageParams
+    );
+
+    console.log(createdLocationMessage);
+
+    if (createdLocationMessage?.$metadata.httpStatusCode !== 200) {
+      throw new BadRequestError("Something went wrong!");
+    }
 
     res.status(201).send({ ...(createLocation as LocationResponse) });
   }

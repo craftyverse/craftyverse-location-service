@@ -3,10 +3,20 @@ import { app } from "../../app";
 import { Location } from "../../models/Location";
 import redisClient from "../../services/redis-service";
 import Redis from "ioredis";
-import { natsWrapper } from "../../services/nats-wrapper";
+import { awsSnsClient } from "@craftyverse-au/craftyverse-common";
+import { awsSqsClient } from "@craftyverse-au/craftyverse-common";
 
 describe("POST /api/location/createLocation", () => {
   let testRedisClient: Redis;
+
+  const mockAwsConfig = {
+    credentials: {
+      accessKeyId: "aws_access_key_id",
+      secretAccessKey: "aws_secret_access_key",
+    },
+    region: "us-east-1",
+    endpoint: "http://localhost:4666",
+  };
   const payload = {
     locationName: "Tony",
     locationEmail: "tony.li@test.io",
@@ -26,15 +36,12 @@ describe("POST /api/location/createLocation", () => {
   };
 
   beforeEach(() => {
+    // This creates a redis client that is connected to the test redis server
     testRedisClient = redisClient.getClient({
       host: "localhost",
       port: 6379,
       password: "password",
     });
-  });
-
-  afterAll(() => {
-    testRedisClient.quit();
   });
 
   describe("## Route request validation", () => {
@@ -223,10 +230,7 @@ describe("POST /api/location/createLocation", () => {
   });
 
   describe("## Event publishing validation", () => {
-    it("should publish a LocationCreatedEvent when a location is successfully saved into database", async () => {
-      let locations = await Location.find({});
-      expect(locations.length).toEqual(0);
-
+    it('should create a new SNS topic called "location_created" if it does not exist', async () => {
       const response = await request(app)
         .post("/api/location/createLocation")
         .set("Cookie", global.signup())
@@ -234,11 +238,44 @@ describe("POST /api/location/createLocation", () => {
 
       expect(response.status).toEqual(201);
 
-      locations = await Location.find({});
+      const topicList = await awsSnsClient.listAllSnsTopics(mockAwsConfig);
+      const topicArn = topicList.Topics![0].TopicArn;
+      expect(topicArn).toEqual(
+        "arn:aws:sns:us-east-1:000000000000:location_created"
+      );
+    });
 
-      expect(locations.length).toEqual(1);
+    it('should create a new SQS queue called "location_created_queue" if it does not exist', async () => {
+      const response = await request(app)
+        .post("/api/location/createLocation")
+        .set("Cookie", global.signup())
+        .send(payload);
 
-      expect(natsWrapper.client.publish).toHaveBeenCalledTimes(1);
+      expect(response.status).toEqual(201);
+
+      const queueList = await awsSqsClient.listAllSqsQueues(mockAwsConfig, {
+        queueNamePrefix: "location_created_queue",
+        maxResults: 1,
+      });
+      console.log("This is the queue list: ", queueList);
+      const queueUrl = queueList.QueueUrls![0];
+      expect(queueUrl).toEqual(
+        "http://localhost:4666/000000000000/location_created_queue"
+      );
+    });
+
+    it('should publish a message to the "location_created" topic when a location is created', async () => {
+      const publishSnsMessageSpy = jest.spyOn(
+        awsSnsClient,
+        "publishSnsMessage"
+      );
+      const response = await request(app)
+        .post("/api/location/createLocation")
+        .set("Cookie", global.signup())
+        .send(payload);
+
+      expect(response.status).toEqual(201);
+      expect(publishSnsMessageSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

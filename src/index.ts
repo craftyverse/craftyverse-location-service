@@ -1,7 +1,13 @@
 import mongoose from "mongoose";
 import { app } from "./app";
 import redisClient from "./services/redis-service";
-import { natsWrapper } from "./services/nats-wrapper";
+import { createLocationCreatedTopic } from "./events/create-event-definitions";
+import {
+  awsSqsClient,
+  locationQueueVariables,
+} from "@craftyverse-au/craftyverse-common";
+import { awsConfig } from "./config/aws-config";
+import { SQSClientConfig } from "@aws-sdk/client-sqs";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -16,35 +22,31 @@ const start = async () => {
     console.log(process.env.REDIS_PASSWORD);
   }
 
-  if (!process.env.NATS_CLIENT_ID) {
-    console.log(process.env.NATS_CLIENT_ID);
-  }
-
-  if (!process.env.NATS_URL) {
-    console.log(process.env.REDIS_PASSWORD);
-  }
-
-  if (!process.env.NATS_CLUSTER_ID) {
-    console.log(process.env.NATS_CLUSTER_ID);
+  if (!process.env.LOCALSTACK_HOST_URL) {
+    throw new Error("LOCALSTACK_HOST_URL is not supplied!");
   }
 
   redisClient.ping();
 
+  // Create SNS location created Topic and SQS location created Queue
+  const topicArn = await createLocationCreatedTopic();
+  console.log("This is the create location topic ARN: ", topicArn);
+
+  const sqsQueueAttributes = {
+    delaySeconds: "0",
+    messageRetentionPeriod: "604800", // 7 days
+    receiveMessageWaitTimeSeconds: "0",
+  };
+
+  const createLocationQueue = await awsSqsClient.createSqsQueue(
+    awsConfig as SQSClientConfig,
+    locationQueueVariables.LOCATION_CREATED_QUEUE,
+    sqsQueueAttributes
+  );
+
+  console.log("This is the new location queue: ", createLocationQueue);
+
   try {
-    natsWrapper.connect(
-      process.env.NATS_CLUSTER_ID!,
-      process.env.NATS_CLIENT_ID!,
-      process.env.NATS_URL!
-    );
-
-    natsWrapper.client.on("close", () => {
-      console.log("NATS connection closed!");
-      process.exit();
-    });
-
-    process.on("SIGINT", () => natsWrapper.client.close());
-    process.on("SIGTERM", () => natsWrapper.client.close());
-
     console.log("connecting to mongodb...");
     await mongoose.connect(process.env.LOCATION_DATABASE_MONGODB_URI as string);
     console.log("connected to mongodb :)");

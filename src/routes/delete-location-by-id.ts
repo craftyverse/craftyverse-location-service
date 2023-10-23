@@ -2,8 +2,6 @@ import express, { Request, Response } from "express";
 import { Location } from "../models/Location";
 import { NotFoundError, requireAuth } from "@craftyverse-au/craftyverse-common";
 import redisClient from "../services/redis-service";
-import { LocationDeletedPublisher } from "../events/publishers/location-deleted-publisher";
-import { natsWrapper } from "../services/nats-wrapper";
 
 const router = express.Router();
 
@@ -22,9 +20,7 @@ router.delete(
     await Location.findByIdAndRemove({ _id: locationId });
 
     redisClient.remove(locationId);
-    new LocationDeletedPublisher(natsWrapper.client).publish({
-      locationId,
-    });
+
     res.status(200).send("Your location has been successfully deleted");
   }
 );
