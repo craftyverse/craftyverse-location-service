@@ -1,13 +1,6 @@
 import mongoose from "mongoose";
 import { app } from "./app";
 import redisClient from "./services/redis-service";
-import { createLocationCreatedTopic } from "./events/create-event-definitions";
-import {
-  awsSqsClient,
-  locationQueueVariables,
-} from "@craftyverse-au/craftyverse-common";
-import { awsConfig } from "./config/aws-config";
-import { SQSClientConfig } from "@aws-sdk/client-sqs";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -27,24 +20,6 @@ const start = async () => {
   }
 
   redisClient.ping();
-
-  // Create SNS location created Topic and SQS location created Queue
-  const topicArn = await createLocationCreatedTopic();
-  console.log("This is the create location topic ARN: ", topicArn);
-
-  const sqsQueueAttributes = {
-    delaySeconds: "0",
-    messageRetentionPeriod: "604800", // 7 days
-    receiveMessageWaitTimeSeconds: "0",
-  };
-
-  const createLocationQueue = await awsSqsClient.createSqsQueue(
-    awsConfig as SQSClientConfig,
-    locationQueueVariables.LOCATION_CREATED_QUEUE,
-    sqsQueueAttributes
-  );
-
-  console.log("This is the new location queue: ", createLocationQueue);
 
   try {
     console.log("connecting to mongodb...");
