@@ -54,7 +54,6 @@ router.patch(
       locationName: updatedLocation.locationName,
       locationEmail: updatedLocation.locationEmail,
       locationIndustry: updatedLocation.locationIndustry,
-      locationRegion: updatedLocation.locationRegion,
       locationCurrency: updatedLocation.locationCurrency,
       locationTimeZone: updatedLocation.locationTimeZone,
       locationSIUnit: updatedLocation.locationSIUnit,
@@ -66,6 +65,8 @@ router.patch(
       locationLegalCountry: updatedLocation.locationLegalCountry,
       locationLegalPostcode: updatedLocation.locationLegalPostcode,
       locationApproved: updatedLocation.locationApproved,
+      locationFirstName: updatedLocation.locationFirstName,
+      locationLastName: updatedLocation.locationLastName,
     };
 
     redisClient.set(

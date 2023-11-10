@@ -10,7 +10,6 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
     locationName: "Tony",
     locationEmail: "tony.li@test.io",
     locationIndustry: "Crafts",
-    locationRegion: "AUS",
     locationCurrency: "AUD",
     locationTimeZone: "1691220336946",
     locationSIUnit: "KG",
@@ -21,6 +20,8 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
     locationLegalState: "NSW",
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
+    locationFirstName: "Tony",
+    locationLastName: "Li",
     locationApproved: false,
   };
 

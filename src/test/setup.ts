@@ -2,10 +2,13 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { SNSClient } from "@aws-sdk/client-sns";
-import { awsSnsClient, awsSqsClient } from "@craftyverse-au/craftyverse-common";
+import {
+  awsSnsClient,
+  awsSqsClient,
+  locationQueueVariables,
+} from "@craftyverse-au/craftyverse-common";
 import { createLocationCreatedTopic } from "../events/create-event-definitions";
 import { SQSClient, SQSClientConfig } from "@aws-sdk/client-sqs";
-import { locationQueueVariables } from "../events/event-variables";
 
 declare global {
   var signup: () => string[];

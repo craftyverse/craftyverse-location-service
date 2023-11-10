@@ -21,7 +21,6 @@ describe("POST /api/location/createLocation", () => {
     locationName: "Tony",
     locationEmail: "tony.li@test.io",
     locationIndustry: "Crafts",
-    locationRegion: "AUS",
     locationCurrency: "AUD",
     locationTimeZone: "1691220336946",
     locationSIUnit: "KG",
@@ -32,6 +31,8 @@ describe("POST /api/location/createLocation", () => {
     locationLegalState: "NSW",
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
+    locationFirstName: "Tony",
+    locationLastName: "Li",
     locationApproved: false,
   };
 
@@ -224,7 +225,7 @@ describe("POST /api/location/createLocation", () => {
         response.body.locationId
       );
       expect(cachedLocation).toEqual(
-        `{\"locationId\":\"${response.body.locationId}\",\"locationUserId\":\"${response.body.locationUserId}\",\"locationName\":\"Tony\",\"locationEmail\":\"tony.li@test.io\",\"locationIndustry\":\"Crafts\",\"locationRegion\":\"AUS\",\"locationCurrency\":\"AUD\",\"locationTimeZone\":\"1691220336946\",\"locationSIUnit\":\"KG\",\"locationLegalBusinessName\":\"Craftyverse\",\"locationLegalAddressLine1\":\"21 George St\",\"locationLegalAddressLine2\":\"Sydney\",\"locationLegalCity\":\"Sydney\",\"locationLegalState\":\"NSW\",\"locationLegalCountry\":\"Australia\",\"locationLegalPostcode\":\"2000\",\"locationApproved\":false}`
+        `{\"locationId\":\"${response.body.locationId}\",\"locationUserId\":\"${response.body.locationUserId}\",\"locationName\":\"Tony\",\"locationFirstName\":\"Tony\",\"locationLastName\":\"Li\",\"locationEmail\":\"tony.li@test.io\",\"locationIndustry\":\"Crafts\",\"locationCurrency\":\"AUD\",\"locationTimeZone\":\"1691220336946\",\"locationSIUnit\":\"KG\",\"locationLegalBusinessName\":\"Craftyverse\",\"locationLegalAddressLine1\":\"21 George St\",\"locationLegalAddressLine2\":\"Sydney\",\"locationLegalCity\":\"Sydney\",\"locationLegalState\":\"NSW\",\"locationLegalCountry\":\"Australia\",\"locationLegalPostcode\":\"2000\",\"locationApproved\":false}`
       );
     });
   });

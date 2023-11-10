@@ -36,7 +36,6 @@ router.get(
       locationName: existingLocation.locationName,
       locationEmail: existingLocation.locationEmail,
       locationIndustry: existingLocation.locationIndustry,
-      locationRegion: existingLocation.locationRegion,
       locationCurrency: existingLocation.locationCurrency,
       locationTimeZone: existingLocation.locationTimeZone,
       locationSIUnit: existingLocation.locationSIUnit,
@@ -48,6 +47,8 @@ router.get(
       locationLegalCountry: existingLocation.locationLegalCountry,
       locationLegalPostcode: existingLocation.locationLegalPostcode,
       locationApproved: existingLocation.locationApproved,
+      locationFirstName: existingLocation.locationFirstName,
+      locationLastName: existingLocation.locationLastName,
     };
 
     if (!requestQueryFields) {

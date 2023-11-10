@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  locationRegionEnum,
-  locationCurrencyEnum,
-  locationSIUnitEnum,
-} from "./location-schema";
+import { locationCurrencyEnum, locationSIUnitEnum } from "./location-schema";
 
 export const PatchLocationfieldSchema = z.object({
   locationName: z.string().optional(),
@@ -12,7 +8,6 @@ export const PatchLocationfieldSchema = z.object({
     .email({ message: "you must provide a valid email." })
     .optional(),
   locationIndustry: z.string().optional(),
-  locationRegion: locationRegionEnum.optional(),
   locationCurrency: locationCurrencyEnum.optional(),
   locationTimeZone: z.string().optional(),
   locationSIUnit: locationSIUnitEnum.optional(),
@@ -23,6 +18,8 @@ export const PatchLocationfieldSchema = z.object({
   locationLegalState: z.string().optional(),
   locationLegalCountry: z.string().optional(),
   locationLegalPostcode: z.string().optional(),
+  locationFirstName: z.string().optional(),
+  locationLastName: z.string().optional(),
 });
 
 export type patchLocationFields = z.infer<typeof PatchLocationfieldSchema>;

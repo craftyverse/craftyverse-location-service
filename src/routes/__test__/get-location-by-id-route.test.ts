@@ -23,6 +23,8 @@ describe("GET /api/location/getLocation/:id", () => {
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
     locationApproved: false,
+    locationFirstName: "Tony",
+    locationLastName: "Li",
   };
 
   beforeEach(() => {
@@ -106,7 +108,6 @@ describe("GET /api/location/getLocation/:id", () => {
         locationName: "Tony",
         locationEmail: "tony.li@test.io",
         locationIndustry: "Crafts",
-        locationRegion: "AUS",
         locationCurrency: "AUD",
         locationTimeZone: "1691220336946",
         locationSIUnit: "KG",
@@ -117,6 +118,8 @@ describe("GET /api/location/getLocation/:id", () => {
         locationLegalState: "NSW",
         locationLegalCountry: "Australia",
         locationLegalPostcode: "2000",
+        locationFirstName: "Tony",
+        locationLastName: "Li",
         locationApproved: false,
       });
     });
@@ -143,7 +146,7 @@ describe("GET /api/location/getLocation/:id", () => {
       );
 
       expect(cachedLocation).toEqual(
-        `{"locationId":"${getLocationResponse.body.locationId}","locationUserId":"${getLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
+        `{"locationId":"${getLocationResponse.body.locationId}","locationUserId":"${getLocationResponse.body.locationUserId}","locationName":"Tony","locationFirstName":"Tony","locationLastName":"Li","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
       );
     });
 
@@ -171,7 +174,6 @@ describe("GET /api/location/getLocation/:id", () => {
         locationName: payload.locationName,
         locationEmail: payload.locationEmail,
         locationIndustry: payload.locationIndustry,
-        locationRegion: locationRegion.Australia,
         locationCurrency: locationCurrency.ausDollar,
         locationTimeZone: payload.locationTimeZone,
         locationSIUnit: locationSIUnit.kilo,
@@ -183,6 +185,8 @@ describe("GET /api/location/getLocation/:id", () => {
         locationLegalCountry: payload.locationLegalCountry,
         locationLegalPostcode: payload.locationLegalPostcode,
         locationApproved: payload.locationApproved,
+        locationFirstName: payload.locationFirstName,
+        locationLastName: payload.locationLastName,
       });
 
       const savedLocation = await createdLocation.save();
@@ -196,7 +200,7 @@ describe("GET /api/location/getLocation/:id", () => {
       const cachedLocation = await testClient.get(savedLocation.id);
 
       expect(cachedLocation).toEqual(
-        `{"locationId":"${createdLocation.id}","locationUserId":"${createdLocation.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
+        `{"locationId":"${createdLocation.id}","locationUserId":"${createdLocation.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false,"locationFirstName":"Tony","locationLastName":"Li"}`
       );
     });
   });

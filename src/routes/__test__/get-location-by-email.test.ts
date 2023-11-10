@@ -9,9 +9,10 @@ describe("GET /api/location/getLocationByEmail/:email", () => {
   let testClient: Redis;
   const payload: NewLocationRequest = {
     locationName: "Tony",
+    locationFirstName: "Tony",
+    locationLastName: "Li",
     locationEmail: "tony.li@test.io",
     locationIndustry: "Crafts",
-    locationRegion: "AUS",
     locationCurrency: "AUD",
     locationTimeZone: "1691220336946",
     locationSIUnit: "KG",
@@ -104,9 +105,10 @@ describe("GET /api/location/getLocationByEmail/:email", () => {
         locationId: createLocationResponse.body.locationId,
         locationUserId: createLocationResponse.body.locationUserId,
         locationName: "Tony",
+        locationFirstName: "Tony",
+        locationLastName: "Li",
         locationEmail: "tony.li@test.io",
         locationIndustry: "Crafts",
-        locationRegion: "AUS",
         locationCurrency: "AUD",
         locationTimeZone: "1691220336946",
         locationSIUnit: "KG",

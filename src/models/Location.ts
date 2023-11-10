@@ -3,9 +3,10 @@ import mongoose from "mongoose";
 interface LocationFields {
   locationUserId: string;
   locationName: string;
+  locationFirstName: string;
+  locationLastName: string;
   locationEmail: string;
   locationIndustry: string;
-  locationRegion: "AUS" | "ENG" | "USA" | "CHN";
   locationCurrency: "AUD" | "USD" | "RMB";
   locationTimeZone: string;
   locationSIUnit: "LB" | "KG";
@@ -29,9 +30,10 @@ interface LocationModel extends mongoose.Model<LocationDocument> {
 interface LocationDocument extends mongoose.Document {
   locationUserId: string;
   locationName: string;
+  locationFirstName: string;
+  locationLastName: string;
   locationEmail: string;
   locationIndustry: string;
-  locationRegion: "AUS" | "ENG" | "USA" | "CHN";
   locationCurrency: "AUD" | "USD" | "RMB";
   locationTimeZone: string;
   locationSIUnit: "LB" | "KG";
@@ -49,9 +51,10 @@ const locationSchema = new mongoose.Schema(
   {
     locationUserId: { type: String, required: true },
     locationName: { type: String, required: true },
+    locationFirstName: { type: String, required: true },
+    locationLastName: { type: String, required: true },
     locationEmail: { type: String, required: true },
     locationIndustry: { type: String, required: true },
-    locationRegion: { type: String, required: true },
     locationCurrency: { type: String, required: true },
     locationTimeZone: { type: String, required: true },
     locationSIUnit: { type: String, required: true },

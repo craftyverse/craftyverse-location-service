@@ -10,7 +10,6 @@ describe("PATCH /api/location/patchLocation/:id", () => {
     locationName: "Tony",
     locationEmail: "tony.li@test.io",
     locationIndustry: "Crafts",
-    locationRegion: "AUS",
     locationCurrency: "AUD",
     locationTimeZone: "1691220336946",
     locationSIUnit: "KG",
@@ -22,6 +21,8 @@ describe("PATCH /api/location/patchLocation/:id", () => {
     locationLegalCountry: "Australia",
     locationLegalPostcode: "2000",
     locationApproved: false,
+    locationFirstName: "Tony",
+    locationLastName: "li",
   };
 
   beforeEach(() => {
@@ -64,37 +65,6 @@ describe("PATCH /api/location/patchLocation/:id", () => {
           {
             message: "you must provide a valid email.",
             field: "locationEmail",
-          },
-        ],
-      });
-    });
-
-    it("should return a 400 status if the requested locationRegion is not supported.", async () => {
-      const updatedFields = {
-        locationRegion: "JAP",
-      };
-
-      const cookie = global.signup();
-
-      const createLocationResponse = await request(app)
-        .post("/api/location/createLocation")
-        .set("Cookie", cookie)
-        .send({ ...payload });
-
-      const patchLocationRespone = await request(app)
-        .patch(
-          `/api/location/patchLocationById/${createLocationResponse.body.locationId}`
-        )
-        .set("Cookie", cookie)
-        .send({ ...updatedFields })
-        .expect(400);
-
-      expect(patchLocationRespone.body).toEqual({
-        errors: [
-          {
-            message:
-              "Invalid enum value. Expected 'AUS' | 'ENG' | 'USA' | 'CHN', received 'JAP'",
-            field: "locationRegion",
           },
         ],
       });
@@ -240,7 +210,6 @@ describe("PATCH /api/location/patchLocation/:id", () => {
         locationName: "Tony",
         locationEmail: updatedFields.locationEmail,
         locationIndustry: "Crafts",
-        locationRegion: "AUS",
         locationCurrency: "AUD",
         locationTimeZone: "1691220336946",
         locationSIUnit: "KG",
@@ -251,6 +220,8 @@ describe("PATCH /api/location/patchLocation/:id", () => {
         locationLegalState: "NSW",
         locationLegalCountry: "Australia",
         locationLegalPostcode: "2000",
+        locationFirstName: "Tony",
+        locationLastName: "li",
         locationApproved: false,
       });
     });
@@ -274,7 +245,7 @@ describe("PATCH /api/location/patchLocation/:id", () => {
       );
 
       expect(cachedLocation).toEqual(
-        `{"locationId":"${createLocationResponse.body.locationId}","locationUserId":"${createLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
+        `{"locationId":"${createLocationResponse.body.locationId}","locationUserId":"${createLocationResponse.body.locationUserId}","locationName":"Tony","locationFirstName":"Tony","locationLastName":"li","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
       );
 
       const patchLocationResponse = await request(app)
@@ -291,7 +262,6 @@ describe("PATCH /api/location/patchLocation/:id", () => {
         locationName: "Tony",
         locationEmail: updatedFields.locationEmail,
         locationIndustry: "Crafts",
-        locationRegion: "AUS",
         locationCurrency: "AUD",
         locationTimeZone: "1691220336946",
         locationSIUnit: "KG",
@@ -302,6 +272,8 @@ describe("PATCH /api/location/patchLocation/:id", () => {
         locationLegalState: "NSW",
         locationLegalCountry: "Australia",
         locationLegalPostcode: "2000",
+        locationFirstName: "Tony",
+        locationLastName: "li",
         locationApproved: false,
       });
 
@@ -312,7 +284,7 @@ describe("PATCH /api/location/patchLocation/:id", () => {
       console.log(updatedCacheLocation);
 
       expect(updatedCacheLocation).toEqual(
-        `{"locationId":"${patchLocationResponse.body.locationId}","locationUserId":"${patchLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@testemail.com.au","locationIndustry":"Crafts","locationRegion":"AUS","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
+        `{"locationId":"${patchLocationResponse.body.locationId}","locationUserId":"${patchLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@testemail.com.au","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false,"locationFirstName":"Tony","locationLastName":"li"}`
       );
     });
   });
