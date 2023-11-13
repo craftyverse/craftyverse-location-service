@@ -1,7 +1,10 @@
 import express, { Request, Response } from "express";
 import { Location } from "../models/Location";
-import { NotFoundError, requireAuth } from "@craftyverse-au/craftyverse-common";
-import redisClient from "../services/redis-service";
+import {
+  NotFoundError,
+  requireAuth,
+  redisClient,
+} from "@craftyverse-au/craftyverse-common";
 
 const router = express.Router();
 

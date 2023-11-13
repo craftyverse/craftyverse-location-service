@@ -4,8 +4,8 @@ import {
   NotFoundError,
   currentUser,
   requireAuth,
+  redisClient,
 } from "@craftyverse-au/craftyverse-common";
-import redisClient from "../services/redis-service";
 import { LocationResponse } from "../schemas/location-schema";
 
 const router = express.Router();

@@ -34,6 +34,8 @@ router.get(
       locationId: existingLocation.id,
       locationUserId: existingLocation.locationUserId,
       locationName: existingLocation.locationName,
+      locationFirstName: existingLocation.locationFirstName,
+      locationLastName: existingLocation.locationLastName,
       locationEmail: existingLocation.locationEmail,
       locationIndustry: existingLocation.locationIndustry,
       locationCurrency: existingLocation.locationCurrency,
@@ -47,8 +49,6 @@ router.get(
       locationLegalCountry: existingLocation.locationLegalCountry,
       locationLegalPostcode: existingLocation.locationLegalPostcode,
       locationApproved: existingLocation.locationApproved,
-      locationFirstName: existingLocation.locationFirstName,
-      locationLastName: existingLocation.locationLastName,
     };
 
     if (!requestQueryFields) {

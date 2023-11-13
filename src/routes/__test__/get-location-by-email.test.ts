@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../app";
 import mongoose from "mongoose";
-import redisClient from "../../services/redis-service";
+import { redisClient } from "@craftyverse-au/craftyverse-common";
 import Redis from "ioredis";
 import { NewLocationRequest } from "../../schemas/location-schema";
 

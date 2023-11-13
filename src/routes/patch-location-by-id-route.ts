@@ -6,11 +6,11 @@ import {
   requireAuth,
   NotAuthorisedError,
   NotFoundError,
+  redisClient,
 } from "@craftyverse-au/craftyverse-common";
 import { PatchLocationfieldSchema } from "../schemas/patch-location-schema";
 
 import { LocationResponse } from "../schemas/location-schema";
-import redisClient from "../services/redis-service";
 
 const router = express.Router();
 

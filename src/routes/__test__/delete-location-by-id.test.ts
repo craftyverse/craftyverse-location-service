@@ -2,7 +2,7 @@ import request from "supertest";
 import { app } from "../../app";
 import mongoose from "mongoose";
 import { Redis } from "ioredis";
-import redisClient from "../../services/redis-service";
+import { redisClient } from "@craftyverse-au/craftyverse-common";
 
 describe("DELETE /api/location/deleteLocationById/:id", () => {
   let testClient: Redis;

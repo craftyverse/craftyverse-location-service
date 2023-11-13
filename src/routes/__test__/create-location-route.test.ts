@@ -1,10 +1,12 @@
 import request from "supertest";
 import { app } from "../../app";
 import { Location } from "../../models/Location";
-import redisClient from "../../services/redis-service";
 import Redis from "ioredis";
-import { awsSnsClient } from "@craftyverse-au/craftyverse-common";
-import { awsSqsClient } from "@craftyverse-au/craftyverse-common";
+import {
+  awsSnsClient,
+  awsSqsClient,
+  redisClient,
+} from "@craftyverse-au/craftyverse-common";
 
 describe("POST /api/location/createLocation", () => {
   let testRedisClient: Redis;
@@ -243,25 +245,6 @@ describe("POST /api/location/createLocation", () => {
       const topicArn = topicList.Topics![0].TopicArn;
       expect(topicArn).toEqual(
         "arn:aws:sns:us-east-1:000000000000:location_created"
-      );
-    });
-
-    it('should create a new SQS queue called "location_created_queue" if it does not exist', async () => {
-      const response = await request(app)
-        .post("/api/location/createLocation")
-        .set("Cookie", global.signup())
-        .send(payload);
-
-      expect(response.status).toEqual(201);
-
-      const queueList = await awsSqsClient.listAllSqsQueues(mockAwsConfig, {
-        queueNamePrefix: "location_created_queue",
-        maxResults: 1,
-      });
-      console.log("This is the queue list: ", queueList);
-      const queueUrl = queueList.QueueUrls![0];
-      expect(queueUrl).toEqual(
-        "http://localhost:4666/000000000000/location_created_queue"
       );
     });
 

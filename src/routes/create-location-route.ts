@@ -9,10 +9,10 @@ import {
   RequestValidationError,
   requireAuth,
   awsSnsClient,
+  redisClient,
   awsSqsClient,
   locationEventVariables,
 } from "@craftyverse-au/craftyverse-common";
-import redisClient from "../services/redis-service";
 import { awsConfig } from "../config/aws-config";
 import { Location } from "../models/Location";
 

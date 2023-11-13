@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import { app } from "./app";
-import redisClient from "./services/redis-service";
-import { createLocationCreatedTopic } from "./events/create-event-definitions";
 import {
   awsSqsClient,
+  awsSnsClient,
+  redisClient,
   locationQueueVariables,
+  locationEventVariables,
 } from "@craftyverse-au/craftyverse-common";
 import { awsConfig } from "./config/aws-config";
-import { SQSClientConfig } from "@aws-sdk/client-sqs";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -33,7 +33,10 @@ const start = async () => {
     process.env.NODE_ENV === "local_test"
   ) {
     // Create SNS location created Topic and SQS location created Queue
-    const topicArn = await createLocationCreatedTopic();
+    const topicArn = await awsSnsClient.createSnsTopic(
+      awsConfig,
+      locationEventVariables.LOCATION_CREATED_EVENT
+    );
     console.log("This is the create location topic ARN: ", topicArn);
 
     const sqsQueueAttributes = {
@@ -43,7 +46,7 @@ const start = async () => {
     };
 
     const createLocationQueue = await awsSqsClient.createSqsQueue(
-      awsConfig as SQSClientConfig,
+      awsConfig,
       locationQueueVariables.LOCATION_CREATED_QUEUE,
       sqsQueueAttributes
     );
