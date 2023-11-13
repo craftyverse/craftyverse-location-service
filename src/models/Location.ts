@@ -10,7 +10,6 @@ interface LocationFields {
   locationCurrency: "AUD" | "USD" | "RMB";
   locationTimeZone: string;
   locationSIUnit: "LB" | "KG";
-  locationLegalBusinessName: string;
   locationLegalAddressLine1: string;
   locationLegalAddressLine2: string | undefined;
   locationLegalCity: string;
@@ -37,7 +36,6 @@ interface LocationDocument extends mongoose.Document {
   locationCurrency: "AUD" | "USD" | "RMB";
   locationTimeZone: string;
   locationSIUnit: "LB" | "KG";
-  locationLegalBusinessName: string;
   locationLegalAddressLine1: string;
   locationLegalAddressLine2: string;
   locationLegalCity: string;
@@ -58,7 +56,6 @@ const locationSchema = new mongoose.Schema(
     locationCurrency: { type: String, required: true },
     locationTimeZone: { type: String, required: true },
     locationSIUnit: { type: String, required: true },
-    locationLegalBusinessName: { type: String, required: true },
     locationLegalAddressLine1: { type: String, required: true },
     locationLegalAddressLine2: { type: String, required: true },
     locationLegalCity: { type: String, required: true },

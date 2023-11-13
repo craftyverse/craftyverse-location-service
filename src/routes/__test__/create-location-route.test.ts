@@ -26,7 +26,6 @@ describe("POST /api/location/createLocation", () => {
     locationCurrency: "AUD",
     locationTimeZone: "1691220336946",
     locationSIUnit: "KG",
-    locationLegalBusinessName: "Craftyverse",
     locationLegalAddressLine1: "21 George St",
     locationLegalAddressLine2: "Sydney",
     locationLegalCity: "Sydney",
@@ -98,15 +97,6 @@ describe("POST /api/location/createLocation", () => {
         .post("/api/location/createLocation")
         .set("Cookie", global.signup())
         .send({ ...payload, locationSIUnit: null });
-
-      expect(response.status).toEqual(400);
-    });
-
-    it('should return an error if "locationLegalBusinessName" mandatory field is not included in the request', async () => {
-      const response = await request(app)
-        .post("/api/location/createLocation")
-        .set("Cookie", global.signup())
-        .send({ ...payload, locationLegalBusinessName: null });
 
       expect(response.status).toEqual(400);
     });
@@ -227,7 +217,7 @@ describe("POST /api/location/createLocation", () => {
         response.body.locationId
       );
       expect(cachedLocation).toEqual(
-        `{\"locationId\":\"${response.body.locationId}\",\"locationUserId\":\"${response.body.locationUserId}\",\"locationName\":\"Tony\",\"locationFirstName\":\"Tony\",\"locationLastName\":\"Li\",\"locationEmail\":\"tony.li@test.io\",\"locationIndustry\":\"Crafts\",\"locationCurrency\":\"AUD\",\"locationTimeZone\":\"1691220336946\",\"locationSIUnit\":\"KG\",\"locationLegalBusinessName\":\"Craftyverse\",\"locationLegalAddressLine1\":\"21 George St\",\"locationLegalAddressLine2\":\"Sydney\",\"locationLegalCity\":\"Sydney\",\"locationLegalState\":\"NSW\",\"locationLegalCountry\":\"Australia\",\"locationLegalPostcode\":\"2000\",\"locationApproved\":false}`
+        `{\"locationId\":\"${response.body.locationId}\",\"locationUserId\":\"${response.body.locationUserId}\",\"locationName\":\"Tony\",\"locationFirstName\":\"Tony\",\"locationLastName\":\"Li\",\"locationEmail\":\"tony.li@test.io\",\"locationIndustry\":\"Crafts\",\"locationCurrency\":\"AUD\",\"locationTimeZone\":\"1691220336946\",\"locationSIUnit\":\"KG\",\"locationLegalAddressLine1\":\"21 George St\",\"locationLegalAddressLine2\":\"Sydney\",\"locationLegalCity\":\"Sydney\",\"locationLegalState\":\"NSW\",\"locationLegalCountry\":\"Australia\",\"locationLegalPostcode\":\"2000\",\"locationApproved\":false}`
       );
     });
   });

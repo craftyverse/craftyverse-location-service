@@ -41,7 +41,6 @@ router.get(
       locationCurrency: existingLocation.locationCurrency,
       locationTimeZone: existingLocation.locationTimeZone,
       locationSIUnit: existingLocation.locationSIUnit,
-      locationLegalBusinessName: existingLocation.locationLegalBusinessName,
       locationLegalAddressLine1: existingLocation.locationLegalAddressLine1,
       locationLegalAddressLine2: existingLocation.locationLegalAddressLine2,
       locationLegalCity: existingLocation.locationLegalCity,

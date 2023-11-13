@@ -57,7 +57,6 @@ router.patch(
       locationCurrency: updatedLocation.locationCurrency,
       locationTimeZone: updatedLocation.locationTimeZone,
       locationSIUnit: updatedLocation.locationSIUnit,
-      locationLegalBusinessName: updatedLocation.locationLegalBusinessName,
       locationLegalAddressLine1: updatedLocation.locationLegalAddressLine1,
       locationLegalAddressLine2: updatedLocation.locationLegalAddressLine2,
       locationLegalCity: updatedLocation.locationLegalCity,

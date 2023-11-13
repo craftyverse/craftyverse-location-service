@@ -13,7 +13,6 @@ describe("DELETE /api/location/deleteLocationById/:id", () => {
     locationCurrency: "AUD",
     locationTimeZone: "1691220336946",
     locationSIUnit: "KG",
-    locationLegalBusinessName: "Craftyverse",
     locationLegalAddressLine1: "21 George St",
     locationLegalAddressLine2: "Sydney",
     locationLegalCity: "Sydney",

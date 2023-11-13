@@ -13,7 +13,6 @@ describe("PATCH /api/location/patchLocation/:id", () => {
     locationCurrency: "AUD",
     locationTimeZone: "1691220336946",
     locationSIUnit: "KG",
-    locationLegalBusinessName: "Craftyverse",
     locationLegalAddressLine1: "21 George St",
     locationLegalAddressLine2: "Sydney",
     locationLegalCity: "Sydney",
@@ -213,7 +212,6 @@ describe("PATCH /api/location/patchLocation/:id", () => {
         locationCurrency: "AUD",
         locationTimeZone: "1691220336946",
         locationSIUnit: "KG",
-        locationLegalBusinessName: "Craftyverse",
         locationLegalAddressLine1: "21 George St",
         locationLegalAddressLine2: "Sydney",
         locationLegalCity: "Sydney",
@@ -245,7 +243,7 @@ describe("PATCH /api/location/patchLocation/:id", () => {
       );
 
       expect(cachedLocation).toEqual(
-        `{"locationId":"${createLocationResponse.body.locationId}","locationUserId":"${createLocationResponse.body.locationUserId}","locationName":"Tony","locationFirstName":"Tony","locationLastName":"li","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
+        `{"locationId":"${createLocationResponse.body.locationId}","locationUserId":"${createLocationResponse.body.locationUserId}","locationName":"Tony","locationFirstName":"Tony","locationLastName":"li","locationEmail":"tony.li@test.io","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false}`
       );
 
       const patchLocationResponse = await request(app)
@@ -265,7 +263,6 @@ describe("PATCH /api/location/patchLocation/:id", () => {
         locationCurrency: "AUD",
         locationTimeZone: "1691220336946",
         locationSIUnit: "KG",
-        locationLegalBusinessName: "Craftyverse",
         locationLegalAddressLine1: "21 George St",
         locationLegalAddressLine2: "Sydney",
         locationLegalCity: "Sydney",
@@ -284,7 +281,7 @@ describe("PATCH /api/location/patchLocation/:id", () => {
       console.log(updatedCacheLocation);
 
       expect(updatedCacheLocation).toEqual(
-        `{"locationId":"${patchLocationResponse.body.locationId}","locationUserId":"${patchLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@testemail.com.au","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalBusinessName":"Craftyverse","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false,"locationFirstName":"Tony","locationLastName":"li"}`
+        `{"locationId":"${patchLocationResponse.body.locationId}","locationUserId":"${patchLocationResponse.body.locationUserId}","locationName":"Tony","locationEmail":"tony.li@testemail.com.au","locationIndustry":"Crafts","locationCurrency":"AUD","locationTimeZone":"1691220336946","locationSIUnit":"KG","locationLegalAddressLine1":"21 George St","locationLegalAddressLine2":"Sydney","locationLegalCity":"Sydney","locationLegalState":"NSW","locationLegalCountry":"Australia","locationLegalPostcode":"2000","locationApproved":false,"locationFirstName":"Tony","locationLastName":"li"}`
       );
     });
   });
