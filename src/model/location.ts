@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 // Properties that are required to create a Location
 interface LocationFields {
   locationLegalName: string;
+  locationUserEmail: string;
   locationEmail: string;
   locationIndustry: string;
   locationRegion: string;
@@ -20,6 +21,7 @@ interface LocationFields {
 
 interface LocationDocument extends mongoose.Document {
   locationLegalName: string;
+  locationUserEmail: string;
   locationEmail: string;
   locationIndustry: string;
   locationRegion: string;
@@ -42,6 +44,7 @@ interface LocationModel extends mongoose.Model<LocationDocument> {
 
 const locationSchema = new mongoose.Schema({
   locationLegalName: { type: String, required: true },
+  locationUserEmail: { type: String, required: true },
   locationEmail: { type: String, required: true },
   locationIndustry: { type: String, required: true },
   locationRegion: { type: String, required: true },

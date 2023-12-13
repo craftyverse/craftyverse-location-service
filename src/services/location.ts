@@ -9,6 +9,7 @@ export class LocationService {
   static async createLocation(location: location) {
     const newLocation = Location.build({
       locationLegalName: location.locationLegalName,
+      locationUserEmail: location.locationUserEmail,
       locationEmail: location.locationEmail,
       locationIndustry: location.locationIndustry,
       locationRegion: location.locationRegion,

@@ -2,13 +2,16 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import "dotenv/config";
 
-import { locationSchema } from "../schemas/location-schema";
+import { locationSchema, location } from "../schemas/location-schema";
 import { logEvents } from "../middleware/log-events";
 import {
   ConflictError,
   RequestValidationError,
 } from "@craftyverse-au/craftyverse-common";
 import { LocationService } from "../services/location";
+import { awsConfig, snsTopicArns, sqsQueueArns } from "../../config/aws-config";
+import { SnsService } from "../services/sns";
+import { RedisService } from "../services/redis";
 
 const createLocationHandler = asyncHandler(
   async (req: Request, res: Response) => {
@@ -46,9 +49,30 @@ const createLocationHandler = asyncHandler(
     // create new location
     const newLocation = await LocationService.createLocation(location);
 
+    const createdLocationResponse = {
+      ...newLocation,
+    };
+
+    const createdLocationResponseString = JSON.stringify(
+      createdLocationResponse
+    );
     // Save to redis cache
 
+    const cachedLocation = await RedisService.set(
+      `location:${newLocation.id}`,
+      createdLocationResponseString
+    );
+
+    console.log(cachedLocation);
+
     // Emit an event that a new location has been created
+    const message = await SnsService.publishSnsMessage(awsConfig, {
+      message: createdLocationResponseString,
+      subject: process.env.LOCATION_CREATED_TOPIC!,
+      topicArn: snsTopicArns[process.env.LOCATION_CREATED_TOPIC!],
+    });
+
+    console.log(message);
 
     res.status(201).send(newLocation.toJSON());
   }
