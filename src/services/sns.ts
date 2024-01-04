@@ -82,11 +82,10 @@ export class SnsService {
       await snsClient.send(createSnsTopicComamnd);
 
     const snsTopicResponseString = JSON.stringify(createSnsTopicResponse);
-    console.log(snsTopicResponseString);
 
     return {
       message: snsTopicResponseString,
-      topicArn: fullTopicArn ? fullTopicArn : snsTopicResponseString,
+      topicArn: fullTopicArn ? fullTopicArn : createSnsTopicResponse.TopicArn!,
     };
   }
 

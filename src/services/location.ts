@@ -3,10 +3,28 @@ import { Location } from "../model/location";
 import { locationSchema, location } from "../schemas/location-schema";
 import { BadRequestError } from "@craftyverse-au/craftyverse-common";
 
+type savedLocation = {
+  locationLegalName: string;
+  locationUserEmail: string;
+  locationEmail: string;
+  locationIndustry: string;
+  locationRegion: string;
+  locationCurrency: string;
+  locationTimeZone: string;
+  locationSIUnit: string;
+  locationAddressLine1: string;
+  locationAddressLine2: string;
+  locationCity: string;
+  locationState: string;
+  locationCountry: string;
+  locationPostcode: string;
+  locationApproved: boolean;
+};
+
 export class LocationService {
   static async getLocationById(locationId: string) {}
 
-  static async createLocation(location: location) {
+  static async createLocation(location: savedLocation) {
     const newLocation = Location.build({
       locationLegalName: location.locationLegalName,
       locationUserEmail: location.locationUserEmail,

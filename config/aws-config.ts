@@ -14,12 +14,20 @@ export const awsConfig: SNSClientConfig = {
 };
 
 export const awsConfigUtils = (() => {
-  const saveSnsTopicArns = (topic: string, topicArn: string) => {
+  const saveSnsTopicArns = async (
+    topic: string,
+    topicArn: string
+  ): Promise<Record<string, string>> => {
     snsTopicArns[topic] = topicArn;
+    return snsTopicArns;
   };
 
-  const saveSqsQueueArns = (queue: string, queueArn: string) => {
+  const saveSqsQueueArns = async (
+    queue: string,
+    queueArn: string
+  ): Promise<Record<string, string>> => {
     sqsQueueArns[queue] = queueArn;
+    return sqsQueueArns;
   };
 
   return {

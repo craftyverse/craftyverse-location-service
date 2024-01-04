@@ -33,11 +33,6 @@ const server = async () => {
       LOCATION_CREATED_TOPIC!
     );
 
-    awsConfigUtils.saveSnsTopicArns(
-      LOCATION_CREATED_TOPIC!,
-      locationCreatedTopicName.topicArn
-    );
-
     // create SQS queues
 
     const locationCreatedQueueName = await SqsService.createSqsQueue(
@@ -50,10 +45,19 @@ const server = async () => {
       }
     );
 
-    awsConfigUtils.saveSqsQueueArns(
+    const savedTopics = await awsConfigUtils.saveSnsTopicArns(
+      LOCATION_CREATED_TOPIC!,
+      locationCreatedTopicName.topicArn
+    );
+
+    console.log("These are the saved topics: ", savedTopics);
+
+    const savedQueues = await awsConfigUtils.saveSqsQueueArns(
       LOCATION_CREATED_QUEUE!,
       locationCreatedQueueName!
     );
+
+    console.log("These are the saved queues", savedQueues);
 
     app.listen(parseInt(PORT), () => {
       console.log(

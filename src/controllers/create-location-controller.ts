@@ -6,6 +6,7 @@ import { locationSchema, location } from "../schemas/location-schema";
 import { logEvents } from "../middleware/log-events";
 import {
   ConflictError,
+  NotAuthorisedError,
   RequestValidationError,
 } from "@craftyverse-au/craftyverse-common";
 import { LocationService } from "../services/location";
@@ -15,6 +16,9 @@ import { RedisService } from "../services/redis";
 
 const createLocationHandler = asyncHandler(
   async (req: Request, res: Response) => {
+    // retrieving user information
+    const authenticatedUserEmail = req.userEmail;
+
     // Checking that the request is vaid
     const createLocationRequest = locationSchema.safeParse(req.body);
 
@@ -47,7 +51,10 @@ const createLocationHandler = asyncHandler(
     }
 
     // create new location
-    const newLocation = await LocationService.createLocation(location);
+    const newLocation = await LocationService.createLocation({
+      ...location,
+      locationUserEmail: authenticatedUserEmail,
+    });
 
     const createdLocationResponse = {
       ...newLocation,
@@ -56,14 +63,8 @@ const createLocationHandler = asyncHandler(
     const createdLocationResponseString = JSON.stringify(
       createdLocationResponse
     );
-    // Save to redis cache
 
-    const cachedLocation = await RedisService.set(
-      `location:${newLocation.id}`,
-      createdLocationResponseString
-    );
-
-    console.log(cachedLocation);
+    console.log("This is the topic arn: ", snsTopicArns);
 
     // Emit an event that a new location has been created
     const message = await SnsService.publishSnsMessage(awsConfig, {
@@ -72,7 +73,16 @@ const createLocationHandler = asyncHandler(
       topicArn: snsTopicArns[process.env.LOCATION_CREATED_TOPIC!],
     });
 
-    console.log(message);
+    console.log("This is the published message: ", message);
+
+    // Save to redis cache
+
+    const cachedLocation = await RedisService.set(
+      `location:${newLocation.id}`,
+      createdLocationResponseString
+    );
+
+    console.log(cachedLocation);
 
     res.status(201).send(newLocation.toJSON());
   }

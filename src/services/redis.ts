@@ -7,40 +7,17 @@ export class RedisService {
   static createRedisClient(): Redis {
     if (!RedisService.redisClient) {
       RedisService.redisClient = new Redis({
-        port: parseInt(process.env.REDIS_PORT!), // Parse the port to number
-        host: process.env.REDIS_HOST!, // Redis host
+        host: process.env.REDIS_HOST!,
+        port: parseInt(process.env.REDIS_PORT!),
+        password: process.env.REDIS_PASSWORD!,
       });
     }
-
     return RedisService.redisClient;
   }
 
-  static async ping(config: Redis): Promise<string> {
+  static async set(key: string, value: string): Promise<string> {
     const redisClient = RedisService.createRedisClient();
-    const pingResponse = await redisClient.ping();
-    return pingResponse;
-  }
-
-  static async set(key: string, value: string): Promise<void> {
-    const redisClient = RedisService.createRedisClient();
-    await redisClient.set(key, value);
-  }
-
-  static async get(key: string): Promise<string | null> {
-    const redisClient = RedisService.createRedisClient();
-    const value = await redisClient.get(key);
-    return value;
-  }
-
-  static async remove(config: Redis, key: string): Promise<number> {
-    const redisClient = RedisService.createRedisClient();
-    const result = await redisClient.del(key);
-    return result;
-  }
-
-  static async quit(config: Redis): Promise<void> {
-    const redisClient = RedisService.createRedisClient();
-    await redisClient.quit();
+    return redisClient.set(key, value);
   }
 }
 
