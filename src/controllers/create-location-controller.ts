@@ -2,15 +2,18 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import "dotenv/config";
 
-import { locationSchema, location } from "../schemas/location-schema";
+import {
+  locationSchema,
+  LocationRequest,
+  LocationResponse,
+} from "../schemas/location-schema";
 import { logEvents } from "../middleware/log-events";
 import {
   ConflictError,
-  NotAuthorisedError,
   RequestValidationError,
 } from "@craftyverse-au/craftyverse-common";
 import { LocationService } from "../services/location";
-import { awsConfig, snsTopicArns, sqsQueueArns } from "../../config/aws-config";
+import { awsConfig, awsConfigUtils } from "../../config/aws-config";
 import { SnsService } from "../services/sns";
 import { RedisService } from "../services/redis";
 
@@ -33,7 +36,7 @@ const createLocationHandler = asyncHandler(
       throw new RequestValidationError(createLocationRequest.error.issues);
     }
 
-    const location = createLocationRequest.data;
+    const location: LocationRequest = createLocationRequest.data;
 
     // Check if the location exists in the database
     const existingLocation = await LocationService.getLocationByEmail(
@@ -64,13 +67,15 @@ const createLocationHandler = asyncHandler(
       createdLocationResponse
     );
 
+    const snsTopicArns = await awsConfigUtils.getTopicArns();
+
     console.log("This is the topic arn: ", snsTopicArns);
 
     // Emit an event that a new location has been created
     const message = await SnsService.publishSnsMessage(awsConfig, {
       message: createdLocationResponseString,
       subject: process.env.LOCATION_CREATED_TOPIC!,
-      topicArn: snsTopicArns[process.env.LOCATION_CREATED_TOPIC!],
+      topicArn: process.env.LOCATION_CREATED_TOPIC_ARN!,
     });
 
     console.log("This is the published message: ", message);

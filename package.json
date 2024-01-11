@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:local": "ts-node-dev --poll src/server.ts",
+    "dev:terraform:apply": "cd terraform && cd environments && cd dev && tflocal apply --auto-approve -var-file=variables.tfvars",
+    "dev:local": "npm run dev:terraform:apply && ts-node-dev --poll src/server.ts",
     "test": "jest --no-cache --verbose --coverage --detectOpenHandles --forceExit"
   },
   "jest": {

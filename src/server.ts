@@ -27,12 +27,6 @@ const server = async () => {
       console.error(error);
     }
 
-    // create SNS Topic names
-    const locationCreatedTopicName = await SnsService.createSnsTopic(
-      awsConfig,
-      LOCATION_CREATED_TOPIC!
-    );
-
     // create SQS queues
 
     const locationCreatedQueueName = await SqsService.createSqsQueue(
@@ -44,13 +38,6 @@ const server = async () => {
         receiveMessageWaitTimeSeconds: "0",
       }
     );
-
-    const savedTopics = await awsConfigUtils.saveSnsTopicArns(
-      LOCATION_CREATED_TOPIC!,
-      locationCreatedTopicName.topicArn
-    );
-
-    console.log("These are the saved topics: ", savedTopics);
 
     const savedQueues = await awsConfigUtils.saveSqsQueueArns(
       LOCATION_CREATED_QUEUE!,

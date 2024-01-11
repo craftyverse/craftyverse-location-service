@@ -21,6 +21,11 @@ export const locationSchema = z.object({
   locationApproved: z.boolean(),
 });
 
-export type location = z.infer<typeof locationSchema>;
-export type locationRegion = z.infer<typeof locationRegionSchema>;
-export type locationCurrency = z.infer<typeof locationCurrencySchema>;
+export const locationResponseSchema = locationSchema.extend({
+  locationUserEmail: z.string(),
+});
+
+export type LocationRequest = z.infer<typeof locationSchema>;
+export type LocationResponse = z.infer<typeof locationResponseSchema>;
+export type LocationRegion = z.infer<typeof locationRegionSchema>;
+export type LocationCurrency = z.infer<typeof locationCurrencySchema>;

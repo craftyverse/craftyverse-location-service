@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { verifyJWT } from "@craftyverse-au/craftyverse-common";
 
 import { createLocationHandler } from "../../controllers/create-location-controller";
+import { getLocationByEmailHandler } from "../../controllers/get-location-by-email-controller";
 
 const router = express.Router();
 
@@ -13,5 +14,6 @@ router.get("/healthcheck", (req: Request, res: Response) => {
 });
 
 router.post("/createlocation", verifyJWT, createLocationHandler);
+router.get("/location/:locationEmail", verifyJWT, getLocationByEmailHandler);
 
 export { router as v1LocationRouter };

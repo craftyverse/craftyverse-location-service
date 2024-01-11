@@ -30,8 +30,18 @@ export const awsConfigUtils = (() => {
     return sqsQueueArns;
   };
 
+  const getTopicArns = async (): Promise<Record<string, string>> => {
+    return snsTopicArns;
+  };
+
+  const getQueueArns = async (): Promise<Record<string, string>> => {
+    return sqsQueueArns;
+  };
+
   return {
     saveSnsTopicArns,
     saveSqsQueueArns,
+    getQueueArns,
+    getTopicArns,
   };
 })();
