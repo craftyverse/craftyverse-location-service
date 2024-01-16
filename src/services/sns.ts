@@ -8,6 +8,9 @@ import {
   PublishCommandOutput,
   SNSClient,
   SNSClientConfig,
+  SubscribeCommand,
+  SubscribeCommandInput,
+  SubscribeCommandOutput,
 } from "@aws-sdk/client-sns";
 import { BadRequestError } from "@craftyverse-au/craftyverse-common";
 
@@ -117,5 +120,31 @@ export class SnsService {
     }
 
     return publishSnsMessageResponse;
+  }
+
+  static async subscribeQueueToTopic(
+    config: SNSClientConfig,
+    params: { topicArn: string; protocol: string; endpoint: string }
+  ) {
+    const snsClient = SnsService.createSnsClient(config);
+
+    const subscribeToSnsTopicParams: SubscribeCommandInput = {
+      TopicArn: params.topicArn,
+      Protocol: params.protocol,
+      Endpoint: params.endpoint,
+    };
+
+    const subscribeToSnsTopicCommand = new SubscribeCommand(
+      subscribeToSnsTopicParams
+    );
+
+    const subscribeToSnsTopicResponse: SubscribeCommandOutput =
+      await snsClient.send(subscribeToSnsTopicCommand);
+
+    if (subscribeToSnsTopicResponse.$metadata.httpStatusCode !== 200) {
+      throw new BadRequestError("Falied to subscribe to topic");
+    }
+
+    return subscribeToSnsTopicResponse;
   }
 }

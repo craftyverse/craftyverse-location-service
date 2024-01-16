@@ -1,9 +1,17 @@
 import { app } from "./app";
 import mongoose from "mongoose";
 import "dotenv/config";
-import { BadRequestError } from "@craftyverse-au/craftyverse-common";
+import {
+  BadRequestError,
+  NotFoundError,
+} from "@craftyverse-au/craftyverse-common";
 import { SnsService } from "./services/sns";
-import { awsConfig, awsConfigUtils } from "../config/aws-config";
+import {
+  awsConfig,
+  awsConfigUtils,
+  snsTopicArns,
+  sqsQueueArns,
+} from "../config/aws-config";
 import "dotenv/config";
 import { SqsService } from "./services/sqs";
 
@@ -13,7 +21,7 @@ const LOCATION_CREATED_TOPIC = process.env.LOCATION_CREATED_TOPIC!;
 const LOCATION_CREATED_QUEUE = process.env.LOCATION_CREATED_QUEUE!;
 
 const server = async () => {
-  if (process.env.NODE_ENV && process.env.NODE_ENV === "dev") {
+  if (process.env.NODE_ENV === "dev") {
     if (!MONGODB_CONNECTION_STRING) {
       throw new BadRequestError("MONGODB_CONNECTION_STRING not defined");
     }
@@ -27,24 +35,63 @@ const server = async () => {
       console.error(error);
     }
 
-    // create SQS queues
+    // Listing SNS topics
+    const snsTopics = await SnsService.listAllSnsTopics(awsConfig);
+    const topicArnList = snsTopics.Topics;
 
-    const locationCreatedQueueName = await SqsService.createSqsQueue(
-      awsConfig,
-      LOCATION_CREATED_QUEUE!,
-      {
-        delaySeconds: "0",
-        messageRetentionPeriod: "604800", // 7 days
-        receiveMessageWaitTimeSeconds: "0",
+    if (!topicArnList) {
+      throw new NotFoundError("No topic lists found");
+    }
+
+    topicArnList.forEach(async (topicArn) => {
+      if (!topicArn.TopicArn) {
+        throw new NotFoundError("No topics found");
       }
-    );
+      const topicNameList = topicArn.TopicArn?.split(":");
+      const topicName = topicNameList[topicNameList.length - 1];
+      await awsConfigUtils.saveSnsTopicArns(topicName, topicArn.TopicArn);
+    });
 
-    const savedQueues = await awsConfigUtils.saveSqsQueueArns(
-      LOCATION_CREATED_QUEUE!,
-      locationCreatedQueueName!
-    );
+    console.log("These are all the topic arns: ", snsTopicArns);
 
-    console.log("These are the saved queues", savedQueues);
+    // Listing SQS queues
+    const sqsQueues = await SqsService.listAllSqsQueues(awsConfig);
+    const sqsQueueUrlList = sqsQueues.QueueUrls;
+
+    if (!sqsQueueUrlList) {
+      throw new NotFoundError("No queue Urls found");
+    }
+
+    sqsQueueUrlList.forEach(async (queueUrl) => {
+      const queueUrlNameBit = queueUrl.split("/");
+      const queueName = queueUrlNameBit[queueUrlNameBit.length - 1];
+
+      console.log(queueName);
+
+      const queueUrls = await awsConfigUtils.saveSqsQueueUrls(
+        `${queueName}:url`,
+        queueUrl
+      );
+      console.log(queueUrls);
+
+      const sqsQueueArn = await SqsService.getQueueAttributes(awsConfig, {
+        queueUrl,
+        attributeNames: ["QueueArn"],
+      });
+
+      console.log(sqsQueueArn.Attributes?.QueueArn);
+      console.log(queueName);
+
+      if (!sqsQueueArn || !sqsQueueArn.Attributes?.QueueArn) {
+        throw new NotFoundError("No queues created");
+      }
+      await awsConfigUtils.saveSqsQueueArns(
+        queueName,
+        sqsQueueArn.Attributes.QueueArn
+      );
+
+      console.log("These are all the queues:", sqsQueueArns);
+    });
 
     app.listen(parseInt(PORT), () => {
       console.log(

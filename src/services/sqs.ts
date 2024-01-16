@@ -2,7 +2,10 @@ import {
   CreateQueueCommand,
   CreateQueueCommandInput,
   CreateQueueCommandOutput,
+  GetQueueAttributesCommand,
+  GetQueueAttributesCommandInput,
   GetQueueAttributesCommandOutput,
+  ListQueuesCommand,
   QueueAttributeName,
   ReceiveMessageCommand,
   ReceiveMessageCommandInput,
@@ -52,7 +55,36 @@ export class SqsService {
     return createSqsQueueResponse.QueueUrl;
   }
 
-  static async receiveQueueMessage(
+  static async listAllSqsQueues(config: SQSClientConfig) {
+    const sqsClient = SqsService.createSqsClient(config);
+
+    const listQueuesCommand = new ListQueuesCommand({});
+
+    const listQueuesResponse = await sqsClient.send(listQueuesCommand);
+
+    return listQueuesResponse;
+  }
+
+  static async getQueueAttributes(
+    config: SQSClientConfig,
+    params: { queueUrl: string; attributeNames: QueueAttributeName[] }
+  ) {
+    const sqsClient = SqsService.createSqsClient(config);
+    const getQueueAttributesParams: GetQueueAttributesCommandInput = {
+      QueueUrl: params.queueUrl,
+      AttributeNames: params.attributeNames,
+    };
+
+    const getQueueAttrCommand = new GetQueueAttributesCommand(
+      getQueueAttributesParams
+    );
+
+    const getQueueAttrResponse = await sqsClient.send(getQueueAttrCommand);
+
+    return getQueueAttrResponse;
+  }
+
+  static async recieveQueueMessage(
     config: SQSClientConfig,
     queueUrl: string,
     params: {

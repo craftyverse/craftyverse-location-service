@@ -19,6 +19,11 @@ export class RedisService {
     const redisClient = RedisService.createRedisClient();
     return redisClient.set(key, value);
   }
+
+  static async get(key: string): Promise<string | null> {
+    const redisClient = RedisService.createRedisClient();
+    return redisClient.get(key);
+  }
 }
 
 // export const redisClient = (() => {

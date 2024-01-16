@@ -13,9 +13,15 @@ import {
   RequestValidationError,
 } from "@craftyverse-au/craftyverse-common";
 import { LocationService } from "../services/location";
-import { awsConfig, awsConfigUtils } from "../../config/aws-config";
+import {
+  awsConfig,
+  awsConfigUtils,
+  sqsQueueArns,
+  sqsQueueUrls,
+} from "../../config/aws-config";
 import { SnsService } from "../services/sns";
 import { RedisService } from "../services/redis";
+import { SqsService } from "../services/sqs";
 
 const createLocationHandler = asyncHandler(
   async (req: Request, res: Response) => {
@@ -59,35 +65,36 @@ const createLocationHandler = asyncHandler(
       locationUserEmail: authenticatedUserEmail,
     });
 
-    const createdLocationResponse = {
-      ...newLocation,
-    };
+    const createdLocationResponse = newLocation.toJSON();
 
     const createdLocationResponseString = JSON.stringify(
       createdLocationResponse
     );
 
-    const snsTopicArns = await awsConfigUtils.getTopicArns();
+    console.log(createdLocationResponseString);
 
-    console.log("This is the topic arn: ", snsTopicArns);
+    const snsTopicArns = await awsConfigUtils.getTopicArns();
 
     // Emit an event that a new location has been created
     const message = await SnsService.publishSnsMessage(awsConfig, {
       message: createdLocationResponseString,
-      subject: process.env.LOCATION_CREATED_TOPIC!,
+      subject: snsTopicArns[process.env.LOCATION_CREATED_TOPIC!],
       topicArn: process.env.LOCATION_CREATED_TOPIC_ARN!,
     });
 
-    console.log("This is the published message: ", message);
-
     // Save to redis cache
-
-    const cachedLocation = await RedisService.set(
-      `location:${newLocation.id}`,
-      createdLocationResponseString
+    const existingChachedLocation = await RedisService.get(
+      `location:${newLocation.id}`
     );
 
-    console.log(cachedLocation);
+    if (!existingChachedLocation) {
+      const cachedLocation = await RedisService.set(
+        `location:${newLocation.id}`,
+        createdLocationResponseString
+      );
+
+      console.log(cachedLocation);
+    }
 
     res.status(201).send(newLocation.toJSON());
   }
