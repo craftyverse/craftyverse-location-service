@@ -71,12 +71,10 @@ const createLocationHandler = asyncHandler(
       createdLocationResponse
     );
 
-    console.log(createdLocationResponseString);
-
     const snsTopicArns = await awsConfigUtils.getTopicArns();
 
     // Emit an event that a new location has been created
-    const message = await SnsService.publishSnsMessage(awsConfig, {
+    await SnsService.publishSnsMessage(awsConfig, {
       message: createdLocationResponseString,
       subject: snsTopicArns[process.env.LOCATION_CREATED_TOPIC!],
       topicArn: process.env.LOCATION_CREATED_TOPIC_ARN!,

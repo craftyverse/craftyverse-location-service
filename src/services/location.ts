@@ -1,12 +1,10 @@
 import { logEvents } from "../middleware/log-events";
 import { Location } from "../model/location";
-import { LocationResponse } from "../schemas/location-schema";
+import { LocationRequest, LocationResponse } from "../schemas/location-schema";
 import { BadRequestError } from "@craftyverse-au/craftyverse-common";
 
 export class LocationService {
-  static async getLocationById(locationId: string) {}
-
-  static async createLocation(location: LocationResponse) {
+  static async createLocation(location: LocationRequest) {
     const newLocation = Location.build({
       locationLegalName: location.locationLegalName,
       locationUserEmail: location.locationUserEmail,
@@ -34,10 +32,37 @@ export class LocationService {
     return createdLocation;
   }
 
+  static async getLocationById(locationId: string) {
+    const exsitingLocation = await Location.findById(locationId);
+
+    return exsitingLocation?.toJSON();
+  }
+
   static async getLocationByEmail(locationEmail: string) {
-    const existingLocation = await Location.findOne({
+    const exsitingLocation = await Location.findOne({
       locationEmail: locationEmail,
     });
-    return existingLocation?.toJSON();
+
+    return exsitingLocation?.toJSON();
+  }
+
+  static async getAllLocationsByUserEmail(
+    page: number,
+    limit: number,
+    userEmail: string
+  ) {
+    const locations = await Location.find({ locationUserEmail: userEmail })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+
+    const totalLocations = await Location.countDocuments({
+      locationUserEmail: userEmail,
+    });
+
+    return {
+      locations: locations,
+      totalPages: Math.ceil(totalLocations / limit),
+      currentPage: page,
+    };
   }
 }

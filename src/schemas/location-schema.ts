@@ -6,6 +6,7 @@ const locationCurrencySchema = z.enum(["USD", "CNY", "AUD", "EUR"]);
 
 export const locationSchema = z.object({
   locationLegalName: z.string(),
+  locationUserEmail: z.string().email(),
   locationEmail: z.string(),
   locationIndustry: z.string(),
   locationRegion: locationRegionSchema,
@@ -22,6 +23,7 @@ export const locationSchema = z.object({
 });
 
 export const locationResponseSchema = locationSchema.extend({
+  locationId: z.string(),
   locationUserEmail: z.string(),
 });
 

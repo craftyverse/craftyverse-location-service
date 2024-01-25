@@ -3,9 +3,10 @@ import { app } from "../../../app";
 import { Location } from "../../../model/location";
 import { awsConfigUtils } from "../../../../config/aws-config";
 
-describe("## POST /api/locations/v1/locations", () => {
+describe("## POST /api/location/v1/locations", () => {
   const locationMock = {
     locationLegalName: "Crafftyverse",
+    locationUserEmail: "tony.li@test.io",
     locationEmail: "tony.li1@test.io",
     locationIndustry: "Arts and Crafts",
     locationRegion: "AUS",
