@@ -22,11 +22,30 @@ export const locationSchema = z.object({
   locationApproved: z.boolean(),
 });
 
+export const updateLocationSchema = z.object({
+  locationLegalName: z.string().optional(),
+  locationUserEmail: z.string().email().optional(),
+  locationEmail: z.string().optional(),
+  locationIndustry: z.string().optional(),
+  locationRegion: locationRegionSchema.optional(),
+  locationCurrency: locationCurrencySchema.optional(),
+  locationTimeZone: z.string().optional(),
+  locationSIUnit: z.string().optional(),
+  locationAddressLine1: z.string().optional(),
+  locationAddressLine2: z.string().optional(),
+  locationCity: z.string().optional(),
+  locationState: z.string().optional(),
+  locationCountry: z.string().optional(),
+  locationPostcode: z.string().optional(),
+  locationApproved: z.boolean().optional(),
+});
+
 export const locationResponseSchema = locationSchema.extend({
   locationId: z.string(),
   locationUserEmail: z.string(),
 });
 
+export type UpdateLocation = z.infer<typeof updateLocationSchema>;
 export type LocationRequest = z.infer<typeof locationSchema>;
 export type LocationResponse = z.infer<typeof locationResponseSchema>;
 export type LocationRegion = z.infer<typeof locationRegionSchema>;

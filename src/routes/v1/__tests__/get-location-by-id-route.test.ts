@@ -62,7 +62,6 @@ describe("## GET /api/location/v1/:locationId", () => {
         .set("Authorization", global.signup())
         .send(locationMock)
         .expect(201);
-      console.log("This is the response: ", response.body);
 
       expect(response.body).toEqual({
         ...locationMock,
@@ -85,7 +84,6 @@ describe("## GET /api/location/v1/:locationId", () => {
       });
 
       const savedLocation = await location.save();
-      console.log(savedLocation);
 
       await request(app)
         .get(`/api/location/v1/${savedLocation._id}`)

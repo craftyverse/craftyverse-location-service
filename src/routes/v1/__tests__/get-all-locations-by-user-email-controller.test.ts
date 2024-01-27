@@ -245,8 +245,6 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
         totalPages: 2,
         currentPage: 1,
       });
-
-      console.log("This is the response body: ", response.body);
     });
 
     it("should return the second location if the limit param is set to 1 and page param is set to 2", async () => {
@@ -289,8 +287,6 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
         totalPages: 2,
         currentPage: 2,
       });
-
-      console.log("This is the response body: ", response.body);
     });
   });
 });

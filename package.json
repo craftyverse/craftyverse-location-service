@@ -6,7 +6,7 @@
   "scripts": {
     "dev:terraform:apply": "cd terraform && cd environments && cd dev && tflocal apply --auto-approve -var-file=variables.tfvars",
     "dev:local": "npm run dev:terraform:apply && ts-node-dev --poll src/server.ts",
-    "test": "npm run dev:terraform:apply && jest --no-cache --verbose --coverage --detectOpenHandles --forceExit"
+    "test": "npm run dev:terraform:apply && (jest --no-cache --verbose --coverage --detectOpenHandles --forceExit)"
   },
   "jest": {
     "preset": "ts-jest",

@@ -1,8 +1,12 @@
 import { logEvents } from "../middleware/log-events";
 import { Location } from "../model/location";
-import { LocationRequest, LocationResponse } from "../schemas/location-schema";
+import {
+  LocationRequest,
+  LocationResponse,
+  UpdateLocation,
+} from "../schemas/location-schema";
 import { BadRequestError } from "@craftyverse-au/craftyverse-common";
-
+import { updateLocationSchema } from "../schemas/location-schema";
 export class LocationService {
   static async createLocation(location: LocationRequest) {
     const newLocation = Location.build({
@@ -64,5 +68,20 @@ export class LocationService {
       totalPages: Math.ceil(totalLocations / limit),
       currentPage: page,
     };
+  }
+
+  static async updateLocationById(
+    filter: Record<string, string>,
+    updateFields: UpdateLocation
+  ) {
+    const updatedLocation = await Location.findOneAndUpdate(
+      filter,
+      updateFields,
+      {
+        new: true,
+      }
+    );
+
+    return updatedLocation?.toJSON();
   }
 }

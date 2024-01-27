@@ -76,8 +76,8 @@ const createLocationHandler = asyncHandler(
     // Emit an event that a new location has been created
     await SnsService.publishSnsMessage(awsConfig, {
       message: createdLocationResponseString,
-      subject: snsTopicArns[process.env.LOCATION_CREATED_TOPIC!],
-      topicArn: process.env.LOCATION_CREATED_TOPIC_ARN!,
+      subject: process.env.LOCATION_CREATED_TOPIC!,
+      topicArn: snsTopicArns[process.env.LOCATION_CREATED_TOPIC!],
     });
 
     // Save to redis cache

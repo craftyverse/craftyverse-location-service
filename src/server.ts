@@ -66,21 +66,15 @@ const server = async () => {
       const queueUrlNameBit = queueUrl.split("/");
       const queueName = queueUrlNameBit[queueUrlNameBit.length - 1];
 
-      console.log(queueName);
-
       const queueUrls = await awsConfigUtils.saveSqsQueueUrls(
         `${queueName}:url`,
         queueUrl
       );
-      console.log(queueUrls);
 
       const sqsQueueArn = await SqsService.getQueueAttributes(awsConfig, {
         queueUrl,
         attributeNames: ["QueueArn"],
       });
-
-      console.log(sqsQueueArn.Attributes?.QueueArn);
-      console.log(queueName);
 
       if (!sqsQueueArn || !sqsQueueArn.Attributes?.QueueArn) {
         throw new NotFoundError("No queues created");
@@ -89,9 +83,9 @@ const server = async () => {
         queueName,
         sqsQueueArn.Attributes.QueueArn
       );
-
-      console.log("These are all the queues:", sqsQueueArns);
     });
+
+    console.log("These are all the queues:", sqsQueueArns);
 
     app.listen(parseInt(PORT), () => {
       console.log(

@@ -265,7 +265,6 @@ describe("## POST /api/location/v1/locations", () => {
         .set("Authorization", global.signup())
         .send(locationMock)
         .expect(201);
-      console.log("This is the response: ", response.body);
 
       expect(response.body).toEqual({
         ...locationMock,
@@ -290,7 +289,6 @@ describe("## POST /api/location/v1/locations", () => {
         .set("Authorization", global.signup())
         .send(locationMock)
         .expect(201);
-      console.log("This is the response: ", response.body);
     });
   });
 });

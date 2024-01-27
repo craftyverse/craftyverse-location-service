@@ -28,7 +28,6 @@ const getLocationByEmailHandler = asyncHandler(
 
     // Retrieve location from cache
     const cachedLocation = await RedisService.get(`location:${locationId}`);
-    console.log(cachedLocation);
 
     if (cachedLocation) {
       const location = JSON.parse(cachedLocation);
@@ -51,7 +50,6 @@ const getLocationByEmailHandler = asyncHandler(
         locationApproved: location.locationApproved,
       };
 
-      console.log("retrived location: ", retrievedLocationResponse);
       res.status(200).send(retrievedLocationResponse);
       return;
     }
