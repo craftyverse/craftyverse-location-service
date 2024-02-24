@@ -255,8 +255,7 @@ describe("## POST /api/location/v1/locations", () => {
     it("should return a 201 (Created) if location does not exist", async () => {
       jest.spyOn(awsConfigUtils, "getTopicArns").mockReturnValue(
         Promise.resolve({
-          "location-created":
-            "arn:aws:sns:ap-southeast-2:000000000000:location-created",
+          "location-created": "arn:aws:sns:ap-southeast-2:000000000000:location-created",
         })
       );
 
@@ -272,23 +271,6 @@ describe("## POST /api/location/v1/locations", () => {
         _id: expect.any(String),
         __v: expect.any(Number),
       });
-    });
-  });
-
-  describe("## SNS validation", () => {
-    it("should return a 201 (Created) if location does not exist", async () => {
-      jest.spyOn(awsConfigUtils, "getTopicArns").mockReturnValue(
-        Promise.resolve({
-          "location-created":
-            "arn:aws:sns:ap-southeast-2:000000000000:location-created",
-        })
-      );
-
-      const response = await request(app)
-        .post("/api/location/v1/createLocation")
-        .set("Authorization", global.signup())
-        .send(locationMock)
-        .expect(201);
     });
   });
 });

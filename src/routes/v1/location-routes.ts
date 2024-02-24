@@ -5,6 +5,7 @@ import { createLocationHandler } from "../../controllers/create-location-control
 import { getLocationByEmailHandler } from "../../controllers/get-location-by-id-controller";
 import { getAllLocationsByUserEmailHandler } from "../../controllers/get-all-locations-by-user-email-controller";
 import { updateLocationByIdHandler } from "../../controllers/update-location-by-id-controller";
+import { deleteLocationByIdHandler } from "../../controllers/delete-location-by-id-controller";
 
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.post("/createlocation", verifyJWT, createLocationHandler);
 router.get("/:locationId", verifyJWT, getLocationByEmailHandler);
 router.get("/email/:userEmail", verifyJWT, getAllLocationsByUserEmailHandler);
 router.patch("/:locationId", verifyJWT, updateLocationByIdHandler);
+router.delete("/:locationId", verifyJWT, deleteLocationByIdHandler);
 
 export { router as v1LocationRouter };

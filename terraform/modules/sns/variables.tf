@@ -7,3 +7,8 @@ variable "location_updated_topic" {
   type = string
   description = "The name of the SNS topic to create for location updated events"
 }
+
+variable "location_deleted_topic" {
+  type = string
+  description = "The name of the SNS topic to create for location deleted events"
+}

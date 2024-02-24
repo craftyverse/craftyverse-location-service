@@ -1,10 +1,6 @@
 import { logEvents } from "../middleware/log-events";
 import { Location } from "../model/location";
-import {
-  LocationRequest,
-  LocationResponse,
-  UpdateLocation,
-} from "../schemas/location-schema";
+import { LocationRequest, LocationResponse, UpdateLocation } from "../schemas/location-schema";
 import { BadRequestError } from "@craftyverse-au/craftyverse-common";
 import { updateLocationSchema } from "../schemas/location-schema";
 export class LocationService {
@@ -50,11 +46,7 @@ export class LocationService {
     return exsitingLocation?.toJSON();
   }
 
-  static async getAllLocationsByUserEmail(
-    page: number,
-    limit: number,
-    userEmail: string
-  ) {
+  static async getAllLocationsByUserEmail(page: number, limit: number, userEmail: string) {
     const locations = await Location.find({ locationUserEmail: userEmail })
       .limit(limit * 1)
       .skip((page - 1) * limit);
@@ -70,18 +62,29 @@ export class LocationService {
     };
   }
 
-  static async updateLocationById(
-    filter: Record<string, string>,
-    updateFields: UpdateLocation
-  ) {
-    const updatedLocation = await Location.findOneAndUpdate(
-      filter,
-      updateFields,
-      {
-        new: true,
-      }
-    );
+  static async updateLocationById(filter: Record<string, string>, updateFields: UpdateLocation) {
+    if (!filter || !updateFields) {
+      throw new BadRequestError("Filter is required.");
+    }
+
+    const updatedLocation = await Location.findOneAndUpdate(filter, updateFields, {
+      new: true,
+    });
 
     return updatedLocation?.toJSON();
+  }
+
+  static async deleteLocationById(locationId: string) {
+    if (!locationId) {
+      throw new BadRequestError("Location Id is required.");
+    }
+
+    const deletedLocation = await Location.findByIdAndDelete(locationId);
+
+    if (!deletedLocation.value) {
+      throw new BadRequestError("Could not delete location.");
+    }
+
+    return deletedLocation.ok;
   }
 }

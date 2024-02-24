@@ -24,6 +24,11 @@ export class RedisService {
     const redisClient = RedisService.createRedisClient();
     return redisClient.get(key);
   }
+
+  static async delete(key: string): Promise<number | null> {
+    const redisClient = RedisService.createRedisClient();
+    return redisClient.del(key);
+  }
 }
 
 // export const redisClient = (() => {
