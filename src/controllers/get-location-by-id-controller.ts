@@ -48,6 +48,9 @@ const getLocationByEmailHandler = asyncHandler(
         locationCountry: location.locationCountry,
         locationPostcode: location.locationPostcode,
         locationApproved: location.locationApproved,
+        locationApprovedAt: location.locationApprovedAt,
+        locationCreatedAt: location.locationCreatedAt,
+        locationDeletedAt: location.locationDeletedAt,
       };
 
       res.status(200).send(retrievedLocationResponse);
@@ -89,6 +92,9 @@ const getLocationByEmailHandler = asyncHandler(
       locationCountry: retrievedLocation.locationCountry,
       locationPostcode: retrievedLocation.locationPostcode,
       locationApproved: retrievedLocation.locationApproved,
+      locationApprovedAt: retrievedLocation.locationApprovedAt || null,
+      locationCreatedAt: retrievedLocation.locationCreatedAt,
+      locationDeletedAt: retrievedLocation.locationDeletedAt || null,
     };
 
     res.status(200).send(retrievedLocationResponse);

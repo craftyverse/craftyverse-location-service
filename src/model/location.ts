@@ -17,6 +17,9 @@ interface LocationFields {
   locationCountry: string;
   locationPostcode: string;
   locationApproved: boolean;
+  locationApprovedAt: string | null;
+  locationCreatedAt: string;
+  locationDeletedAt: string | null;
 }
 
 interface LocationDocument extends mongoose.Document {
@@ -35,6 +38,9 @@ interface LocationDocument extends mongoose.Document {
   locationCountry: string;
   locationPostcode: string;
   locationApproved: boolean;
+  locationApprovedAt: string | null;
+  locationCreatedAt: string;
+  locationDeletedAt: string | null;
 }
 
 // Properties that a location model requires
@@ -58,6 +64,9 @@ const locationSchema = new mongoose.Schema({
   locationCountry: { type: String, required: true },
   locationPostcode: { type: String, required: true },
   locationApproved: { type: Boolean, required: true },
+  locationApprovedAt: { type: String, required: false, nullable: true },
+  locationCreatedAt: { type: String, required: true },
+  locationDeletedAt: { type: String, required: false, nullable: true },
 });
 
 locationSchema.statics.build = (fields: LocationFields) => {

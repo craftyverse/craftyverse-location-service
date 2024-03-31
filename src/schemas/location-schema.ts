@@ -20,6 +20,9 @@ export const locationSchema = z.object({
   locationCountry: z.string(),
   locationPostcode: z.string(),
   locationApproved: z.boolean(),
+  locationApprovedAt: z.string().nullable(),
+  locationCreatedAt: z.string(),
+  locationDeletedAt: z.string().nullable(),
 });
 
 export const updateLocationSchema = z.object({
@@ -38,6 +41,9 @@ export const updateLocationSchema = z.object({
   locationCountry: z.string().optional(),
   locationPostcode: z.string().optional(),
   locationApproved: z.boolean().optional(),
+  locationApprovedAt: z.string().nullable(),
+  locationCreatedAt: z.string(),
+  locationDeletedAt: z.string().nullable(),
 });
 
 export const locationResponseSchema = locationSchema.extend({
