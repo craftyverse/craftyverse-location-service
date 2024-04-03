@@ -20,6 +20,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
     locationCountry: "Australia",
     locationPostcode: "2153",
     locationApproved: false,
+    locationApprovedAt: null,
+    locationCreatedAt: new Date().toISOString(),
+    locationDeletedAt: null,
   };
 
   const location2Mock = {
@@ -38,6 +41,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
     locationCountry: "Australia",
     locationPostcode: "2153",
     locationApproved: false,
+    locationApprovedAt: null,
+    locationCreatedAt: new Date().toISOString(),
+    locationDeletedAt: null,
   };
 
   describe("# Request validation", () => {
@@ -119,6 +125,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
             locationCountry: location1Mock.locationCountry,
             locationPostcode: location1Mock.locationPostcode,
             locationApproved: location1Mock.locationApproved,
+            locationApprovedAt: location1Mock.locationApprovedAt,
+            locationCreatedAt: location1Mock.locationCreatedAt,
+            locationDeletedAt: location1Mock.locationDeletedAt,
             __v: 0,
           },
           {
@@ -138,6 +147,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
             locationCountry: location2Mock.locationCountry,
             locationPostcode: location2Mock.locationPostcode,
             locationApproved: location2Mock.locationApproved,
+            locationApprovedAt: location2Mock.locationApprovedAt,
+            locationCreatedAt: location2Mock.locationCreatedAt,
+            locationDeletedAt: location2Mock.locationDeletedAt,
             __v: 0,
           },
         ],
@@ -178,6 +190,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
             locationCountry: location1Mock.locationCountry,
             locationPostcode: location1Mock.locationPostcode,
             locationApproved: location1Mock.locationApproved,
+            locationApprovedAt: location1Mock.locationApprovedAt,
+            locationCreatedAt: location1Mock.locationCreatedAt,
+            locationDeletedAt: location1Mock.locationDeletedAt,
             __v: 0,
           },
           {
@@ -197,6 +212,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
             locationCountry: location2Mock.locationCountry,
             locationPostcode: location2Mock.locationPostcode,
             locationApproved: location2Mock.locationApproved,
+            locationApprovedAt: location2Mock.locationApprovedAt,
+            locationCreatedAt: location2Mock.locationCreatedAt,
+            locationDeletedAt: location2Mock.locationDeletedAt,
             __v: 0,
           },
         ],
@@ -239,6 +257,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
             locationCountry: location1Mock.locationCountry,
             locationPostcode: location1Mock.locationPostcode,
             locationApproved: location1Mock.locationApproved,
+            locationApprovedAt: location1Mock.locationApprovedAt,
+            locationCreatedAt: location1Mock.locationCreatedAt,
+            locationDeletedAt: location1Mock.locationDeletedAt,
             __v: 0,
           },
         ],
@@ -281,6 +302,9 @@ describe("## GET /api/location/v1/email/:userEmail", () => {
             locationCountry: location2Mock.locationCountry,
             locationPostcode: location2Mock.locationPostcode,
             locationApproved: location2Mock.locationApproved,
+            locationApprovedAt: location2Mock.locationApprovedAt,
+            locationCreatedAt: location2Mock.locationCreatedAt,
+            locationDeletedAt: location2Mock.locationDeletedAt,
             __v: 0,
           },
         ],

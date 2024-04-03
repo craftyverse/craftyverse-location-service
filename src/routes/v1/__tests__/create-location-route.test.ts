@@ -20,6 +20,9 @@ describe("## POST /api/location/v1/locations", () => {
     locationCountry: "Australia",
     locationPostcode: "2153",
     locationApproved: false,
+    locationApprovedAt: null,
+    locationCreatedAt: new Date().toISOString(),
+    locationDeletedAt: null,
   };
   describe("# Request validation", () => {
     it("should return a 400 (RequestValidationError) if locationLegalName is not provided", async () => {
@@ -238,6 +241,9 @@ describe("## POST /api/location/v1/locations", () => {
       const newLocation = Location.build({
         ...locationMock,
         locationUserEmail: "example@example.com",
+        locationApprovedAt: null,
+        locationCreatedAt: new Date().toISOString(),
+        locationDeletedAt: null,
       });
       await newLocation.save();
 
@@ -255,7 +261,8 @@ describe("## POST /api/location/v1/locations", () => {
     it("should return a 201 (Created) if location does not exist", async () => {
       jest.spyOn(awsConfigUtils, "getTopicArns").mockReturnValue(
         Promise.resolve({
-          "location-created": "arn:aws:sns:ap-southeast-2:000000000000:location-created",
+          "location-created":
+            "arn:aws:sns:ap-southeast-2:000000000000:location-created",
         })
       );
 

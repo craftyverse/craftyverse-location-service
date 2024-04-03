@@ -25,6 +25,9 @@ describe("## GET /api/location/v1/:locationId", () => {
     locationCountry: "Australia",
     locationPostcode: "2153",
     locationApproved: false,
+    locationApprovedAt: null,
+    locationCreatedAt: new Date().toISOString(),
+    locationDeletedAt: null,
   };
   describe("# Request validation", () => {
     const mockLocationId = new mongoose.Types.ObjectId().toHexString();
@@ -81,6 +84,9 @@ describe("## GET /api/location/v1/:locationId", () => {
       const cachedLocation = jest.spyOn(RedisService, "set");
       const location = Location.build({
         ...locationMock,
+        locationApprovedAt: null,
+        locationCreatedAt: new Date().toISOString(),
+        locationDeletedAt: null,
       });
 
       const savedLocation = await location.save();

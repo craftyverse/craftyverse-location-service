@@ -19,19 +19,20 @@ describe("## DELETE /api/location/v1//:locationId", () => {
     locationCountry: "Australia",
     locationPostcode: "2153",
     locationApproved: false,
+    locationApprovedAt: null,
+    locationCreatedAt: new Date().toISOString(),
+    locationDeletedAt: null,
   };
 
   describe("## Request parameter validation", () => {
     it("should return a (400) BadRequestError if the locationId is not provided", async () => {
-      const response = await request(app).delete(`/api/location/v1/${undefined}`).set("Authorization", global.signup());
+      const response = await request(app)
+        .delete(`/api/location/v1/${undefined}`)
+        .set("Authorization", global.signup());
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
         errors: [{ message: "Location ID is required.", field: "badRequest" }],
       });
     });
-  });
-
-  describe("## Endpoint validation", () => {
-    it("should successfully delete a location from");
   });
 });

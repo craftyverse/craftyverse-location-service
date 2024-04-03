@@ -43,14 +43,10 @@ export class SqsService {
       },
     };
 
-    console.log(createSqsQueueParams);
-
     const createSqsQueueCommand = new CreateQueueCommand(createSqsQueueParams);
 
     const createSqsQueueResponse: CreateQueueCommandOutput =
       await sqsClient.send(createSqsQueueCommand);
-
-    // console.log(createSqsQueueResponse);
 
     return createSqsQueueResponse.QueueUrl;
   }

@@ -60,10 +60,12 @@ const createLocationHandler = asyncHandler(
     }
 
     // create new location
-    const newLocation = await LocationService.createLocation({
-      ...location,
-      locationUserEmail: authenticatedUserEmail,
-    });
+    const newLocation = await LocationService.createLocation(
+      {
+        ...location,
+      },
+      authenticatedUserEmail
+    );
 
     const createdLocationResponse = newLocation.toJSON();
 
@@ -81,17 +83,15 @@ const createLocationHandler = asyncHandler(
     });
 
     // Save to redis cache
-    const existingChachedLocation = await RedisService.get(
+    const existingCachedLocation = await RedisService.get(
       `location:${newLocation.id}`
     );
 
-    if (!existingChachedLocation) {
+    if (!existingCachedLocation) {
       const cachedLocation = await RedisService.set(
         `location:${newLocation.id}`,
         createdLocationResponseString
       );
-
-      console.log(cachedLocation);
     }
 
     res.status(201).send(newLocation.toJSON());

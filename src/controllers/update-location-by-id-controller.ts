@@ -14,7 +14,6 @@ import { awsConfig, awsConfigUtils } from "../../config/aws-config";
 
 const updateLocationByIdHandler = asyncHandler(
   async (req: Request, res: Response) => {
-    console.log(req.params.locationId);
     const locationId = req.params.locationId;
 
     if (!locationId) {
@@ -40,7 +39,6 @@ const updateLocationByIdHandler = asyncHandler(
     }
 
     const updateLocationFields = updateLocationRequest.data;
-    console.log("This is the location fields to update", updateLocationFields);
 
     const updatedLocation = await LocationService.updateLocationById(
       { _id: locationId },
@@ -70,8 +68,6 @@ const updateLocationByIdHandler = asyncHandler(
       subject: process.env.LOCATION_UPDATED_TOPIC!,
       topicArn: snsTopicArns[process.env.LOCATION_UPDATED_TOPIC!],
     });
-
-    console.log("This is the updated location: ", updatedLocation);
 
     res.status(200).send(updatedLocation);
   }

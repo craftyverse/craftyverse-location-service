@@ -8,10 +8,13 @@ import {
 import { BadRequestError } from "@craftyverse-au/craftyverse-common";
 import { updateLocationSchema } from "../schemas/location-schema";
 export class LocationService {
-  static async createLocation(location: LocationRequest) {
+  static async createLocation(
+    location: LocationRequest,
+    authenticatedEmail: string
+  ) {
     const newLocation = Location.build({
       locationLegalName: location.locationLegalName,
-      locationUserEmail: location.locationUserEmail,
+      locationUserEmail: authenticatedEmail,
       locationEmail: location.locationEmail,
       locationIndustry: location.locationIndustry,
       locationRegion: location.locationRegion,

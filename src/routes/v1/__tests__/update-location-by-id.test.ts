@@ -21,6 +21,9 @@ describe("## PATCH /api/location/v1/:locationId", () => {
     locationCountry: "Australia",
     locationPostcode: "2153",
     locationApproved: false,
+    locationApprovedAt: null,
+    locationCreatedAt: new Date().toISOString(),
+    locationDeletedAt: null,
   };
 
   describe("# Request validation", () => {
@@ -49,6 +52,8 @@ describe("## PATCH /api/location/v1/:locationId", () => {
   });
 
   describe("# Data update validation", () => {
+    const currentDate = new Date().toISOString();
+
     beforeEach(async () => {
       jest.spyOn(awsConfigUtils, "getTopicArns").mockReturnValue(
         Promise.resolve({
@@ -61,12 +66,15 @@ describe("## PATCH /api/location/v1/:locationId", () => {
     });
     it("should return a 400 (BadRequestErorr) if the location does not exist", async () => {
       const mockLocationId = new mongoose.Types.ObjectId().toHexString();
-
       const response = await request(app)
         .patch(`/api/location/v1/${mockLocationId}`)
         .set("Authorization", global.signup())
         .send({
           locationLegalName: "Crafftyverse",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .expect(400);
 
@@ -90,7 +98,13 @@ describe("## PATCH /api/location/v1/:locationId", () => {
       const updateLocationResponse = await request(app)
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .set("Authorization", global.signup())
-        .send({ locationLegalName: "Love Craft Studios" })
+        .send({
+          locationLegalName: "Love Craft Studios",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
+        })
         .expect(200);
 
       expect(updateLocationResponse.body.locationLegalName).toEqual(
@@ -108,14 +122,18 @@ describe("## PATCH /api/location/v1/:locationId", () => {
       const updateLocationResponse = await request(app)
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .set("Authorization", global.signup())
-        .send({ locationEmail: "mark.liu@test.io" })
+        .send({
+          locationEmail: "mark.liu@test.io",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
+        })
         .expect(200);
 
       expect(updateLocationResponse.body.locationEmail).toEqual(
         "mark.liu@test.io"
       );
-
-      console.log(updateLocationResponse.body);
     });
     it('should successfully update a location with the "locationIndustry" field', async () => {
       const createLocationResponse = await request(app)
@@ -127,7 +145,13 @@ describe("## PATCH /api/location/v1/:locationId", () => {
       const updateLocationResponse = await request(app)
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .set("Authorization", global.signup())
-        .send({ locationIndustry: "Technology" })
+        .send({
+          locationIndustry: "Technology",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
+        })
         .expect(200);
     });
 
@@ -138,18 +162,17 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .send(locationMock)
         .expect(201);
 
-      console.log(
-        "This is the newly created location",
-        createLocationResponse.body
-      );
-
       const updateLocationResponse = await request(app)
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .set("Authorization", global.signup())
-        .send({ locationRegion: "USA" })
+        .send({
+          locationRegion: "USA",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
+        })
         .expect(200);
-
-      console.log(updateLocationResponse.body);
     });
 
     it('should successfully update a location with the "locationCurrency" field', async () => {
@@ -162,7 +185,13 @@ describe("## PATCH /api/location/v1/:locationId", () => {
       const updateLocationResponse = await request(app)
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .set("Authorization", global.signup())
-        .send({ locationCurrency: "CNY" })
+        .send({
+          locationCurrency: "CNY",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
+        })
         .expect(200);
 
       expect(updateLocationResponse.body.locationCurrency).toEqual("CNY");
@@ -178,7 +207,13 @@ describe("## PATCH /api/location/v1/:locationId", () => {
       const updateLocationResponse = await request(app)
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .set("Authorization", global.signup())
-        .send({ locationTimeZone: "GST" })
+        .send({
+          locationTimeZone: "GST",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
+        })
         .expect(200);
 
       expect(updateLocationResponse.body.locationTimeZone).toEqual("GST");
@@ -194,7 +229,13 @@ describe("## PATCH /api/location/v1/:locationId", () => {
       const updateLocationResponse = await request(app)
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .set("Authorization", global.signup())
-        .send({ locationSIUnit: "LBS" })
+        .send({
+          locationSIUnit: "LBS",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
+        })
         .expect(200);
 
       expect(updateLocationResponse.body.locationSIUnit).toEqual("LBS");
@@ -215,6 +256,10 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .set("Authorization", global.signup())
         .send({
           locationAddressLine1: "25 Delaney Drive",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .expect(200);
 
@@ -237,6 +282,10 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .send({
           locationAddressLine2: "Castle Hill",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .set("Authorization", global.signup())
         .expect(200);
@@ -260,6 +309,10 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .send({
           locationCity: "Melbourne",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .set("Authorization", global.signup())
         .expect(200);
@@ -281,6 +334,10 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .send({
           locationState: "VIC",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .set("Authorization", global.signup())
         .expect(200);
@@ -302,6 +359,10 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .send({
           locationCountry: "China",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .set("Authorization", global.signup())
         .expect(200);
@@ -323,6 +384,10 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .send({
           locationPostcode: "2155",
+          locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .set("Authorization", global.signup())
         .expect(200);
@@ -344,6 +409,9 @@ describe("## PATCH /api/location/v1/:locationId", () => {
         .patch(`/api/location/v1/${createLocationResponse.body._id}`)
         .send({
           locationApproved: true,
+          locationApprovedAt: null,
+          locationCreatedAt: currentDate,
+          locationDeletedAt: null,
         })
         .set("Authorization", global.signup())
         .expect(200);
